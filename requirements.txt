@@ -1,8 +1,8 @@
-pandas
+pandas==3.0.6
 numpy
-scikit-learn
+scikit-learn==1.9.1
 openpyxl
-joblib
+joblib==1.6.0
 streamlit
 matplotlib
 seaborn

@@ -1,6 +1,14 @@
+import sys
+from pathlib import Path
 import pandas as pd
 
-df = pd.read_excel("data/raw/AI-Powered Chatbot.xlsx")
+BASE_DIR = Path(__file__).resolve().parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from src.ml.config import RAW_DATA_PATH
+
+df = pd.read_excel(RAW_DATA_PATH)
 
 print(df.head())
 print(df.shape)

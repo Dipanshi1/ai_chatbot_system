@@ -1,22 +1,22 @@
+import sys
+from pathlib import Path
 import pandas as pd
-import re
 import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.insert(0, str(BASE_DIR))
+
+from src.ml.config import MODEL_PATH, RAW_DATA_PATH, VECTORIZER_PATH
+from src.ml.preprocessing import clean_text
 
 # Load dataset
-df = pd.read_excel("data/raw/AI-Powered Chatbot.xlsx")
-
+df = pd.read_excel(RAW_DATA_PATH)
 
 # Select input and target
 X = df["User Message"]
 y = df["Intent"]
-
-
-def clean_text(text):
-    text = text.lower()
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
 
 
 # Clean text
@@ -133,11 +133,9 @@ print(results.to_string(index=False))
 # Save Model and Vectorizer
 # =========================
 
-import os
+MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
 
-os.makedirs("artifacts", exist_ok=True)
-
-joblib.dump(svm_model, "artifacts/intent_model.pkl")
-joblib.dump(vectorizer, "artifacts/tfidf_vectorizer.pkl")
+joblib.dump(svm_model, MODEL_PATH)
+joblib.dump(vectorizer, VECTORIZER_PATH)
 
 print("\nModel and vectorizer saved successfully.")
