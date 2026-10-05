@@ -46,7 +46,7 @@ class ChatPipeline:
             f"linsvc-{_sha256_prefix(self.classifier.model_path)}"
             f"+tfidf-{_sha256_prefix(self.classifier.vectorizer_path)}"
         )
-        self.kb_version = f"kb-{_sha256_prefix(self.retriever.data_path)}"
+        self.kb_version = self.retriever.kb_version
         self.policy_version = POLICY_VERSION
 
     def answer(self, message: str, policy: Optional[PolicyConfig] = None) -> ChatResult:

@@ -1,0 +1,27 @@
+intent,precision,recall,f1,support,predicted_count,in_test,note
+academic_advising,0.333333,1.0,0.5,1,3,True,support<=1
+academic_policies,0.0,0.0,0.0,3,2,True,
+academic_programs,0.0,0.0,0.0,0,0,False,absent from test
+academic_support,1.0,1.0,1.0,1,1,True,support<=1
+accessibility,1.0,0.666667,0.8,3,2,True,
+administration,0.5,0.5,0.5,4,4,True,
+admissions,0.0,0.0,0.0,0,0,False,absent from test
+campus_facilities,0.714286,0.714286,0.714286,7,7,True,
+career_services,0.0,0.0,0.0,1,2,True,support<=1
+course_information,0.0,0.0,0.0,0,4,False,absent from test
+course_registration,0.0,0.0,0.0,1,0,True,support<=1
+exam_schedule,0.0,0.0,0.0,0,0,False,absent from test
+financial_aid,0.8,0.571429,0.666667,7,5,True,
+grades,0.0,0.0,0.0,0,0,False,absent from test
+health,0.0,0.0,0.0,1,0,True,support<=1
+housing,0.0,0.0,0.0,1,0,True,support<=1
+library,0.0,0.0,0.0,0,0,False,absent from test
+mental_health,0.0,0.0,0.0,1,0,True,support<=1
+research_support,0.0,0.0,0.0,0,0,False,absent from test
+safety,0.0,0.0,0.0,0,1,False,absent from test
+schedule,0.0,0.0,0.0,0,0,False,absent from test
+student_employment,0.0,0.0,0.0,1,1,True,support<=1
+student_life,0.5,1.0,0.666667,1,2,True,support<=1
+student_services,0.6,0.75,0.666667,4,5,True,
+study_abroad,0.0,0.0,0.0,0,0,False,absent from test
+technical_issue,1.0,0.333333,0.5,3,1,True,

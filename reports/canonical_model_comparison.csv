@@ -1,0 +1,5 @@
+model,display_name,selected,n_train,n_test,correct,accuracy,accuracy_ci_low,accuracy_ci_high,macro_f1_present,n_labels_present,macro_f1_all_classes,weighted_f1
+logistic_regression,Logistic Regression,False,160,40,17,0.425,0.285094,0.578049,0.237061,16,0.145884,0.373772
+linear_svm,Linear SVM,True,160,40,20,0.5,0.351995,0.648005,0.334127,18,0.231319,0.51
+multinomial_nb,Multinomial NB,False,160,40,15,0.375,0.24223,0.529676,0.119737,16,0.073684,0.286579
+majority_baseline,Majority Baseline,False,160,40,7,0.175,0.087454,0.3195,0.018617,16,0.011457,0.052128

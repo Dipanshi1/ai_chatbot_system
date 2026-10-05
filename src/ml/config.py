@@ -30,6 +30,28 @@ MODEL_RANDOM_STATE = 42
 REQUIRED_COLUMNS = ("User Message", "Intent", "Bot Response")
 MAX_MESSAGE_CHARS = 500
 
+FEATURE_COLUMN = "User Message"
+TARGET_COLUMN = "Intent"
+FORBIDDEN_FEATURE_COLUMNS = (
+    "Intent Confidence",
+    "Topic",
+    "Sentiment Score",
+    "Sentiment Label",
+    "Bot Response",
+    "User ID",
+    "Conversation ID",
+    "Timestamp",
+)
+MODEL_NAMES = (
+    "logistic_regression",
+    "linear_svm",
+    "multinomial_nb",
+)
+SELECTED_MODEL = "linear_svm"
+REPEATED_SPLIT_SEEDS = tuple(range(30))
+WILSON_Z = 1.959963984540054
+METRIC_DECIMALS = 6
+
 # ---------------------------------------------------------------------------
 # Safety policy (Phase 4)
 #

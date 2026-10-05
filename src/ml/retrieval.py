@@ -1,5 +1,6 @@
+import hashlib
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -10,6 +11,14 @@ from .config import RAW_DATA_PATH
 from .lexical import content_tokens, tokenize
 from .preprocessing import clean_text
 from .schemas import RetrievalCandidate
+
+
+def _sha256_prefix(path: Path, length: int = 12) -> str:
+    digest = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(65536), b""):
+            digest.update(chunk)
+    return digest.hexdigest()[:length]
 
 
 class ResponseRetriever:
@@ -23,16 +32,57 @@ class ResponseRetriever:
     gate on. This class makes no acceptance decisions.
     """
 
-    def __init__(self, data_path: Optional[Path] = None):
-        self.data_path = Path(data_path) if data_path else RAW_DATA_PATH
+    def __init__(
+        self,
+        data_path: Optional[Union[Path, str]] = None,
+        df: Optional[pd.DataFrame] = None,
+    ):
+        if data_path is not None and df is not None:
+            raise ValueError("Cannot specify both data_path and df")
+
         self.df: Optional[pd.DataFrame] = None
         self._questions: list = []
         self._responses: list = []
         self._question_content: list = []
         self._intent_rows: Dict[str, np.ndarray] = {}
+        self._row_ids: np.ndarray = np.array([])
         self._vectorizer: Optional[TfidfVectorizer] = None
         self._matrix = None
-        self._load_data()
+        self._kb_version: str = ""
+
+        if df is not None:
+            if not isinstance(df, pd.DataFrame):
+                raise TypeError("df must be a pandas DataFrame")
+            if df.empty:
+                raise ValueError("DataFrame must be non-empty")
+            required = ["User Message", "Intent", "Bot Response"]
+            missing = [c for c in required if c not in df.columns]
+            if missing:
+                raise ValueError(f"DataFrame missing required column(s): {missing}")
+            if not df.index.is_unique:
+                raise ValueError("DataFrame index must be unique")
+            if not pd.api.types.is_integer_dtype(df.index):
+                raise ValueError("DataFrame index must have integer dtype")
+
+            self.data_path = None
+            self.df = df.sort_index().copy()
+            csv_bytes = (
+                self.df[["User Message", "Intent", "Bot Response"]]
+                .sort_index()
+                .to_csv(lineterminator="\n")
+                .encode("utf-8")
+            )
+            self._kb_version = f"kb-df-{hashlib.sha256(csv_bytes).hexdigest()[:12]}"
+            self._build_index()
+        else:
+            self.data_path = Path(data_path) if data_path else RAW_DATA_PATH
+            self._load_data()
+            self._kb_version = f"kb-{_sha256_prefix(self.data_path)}"
+
+    @property
+    def kb_version(self) -> str:
+        """Version string identifying the knowledge base contents."""
+        return self._kb_version
 
     def _load_data(self) -> None:
         """Load historical question-response data and build the retrieval index."""
@@ -47,6 +97,7 @@ class ResponseRetriever:
         if self.df is None or self.df.empty:
             return
 
+        self._row_ids = np.array(self.df.index)
         self._questions = [clean_text(q) for q in self.df["User Message"]]
         self._responses = [str(r) for r in self.df["Bot Response"]]
         self._question_content = [
@@ -86,17 +137,18 @@ class ResponseRetriever:
         if best_cosine <= 0.0:
             return None
 
-        row_id = int(rows[best_pos])
+        pos = int(rows[best_pos])
+        row_id = int(self._row_ids[pos])
         query_content = frozenset(content_tokens(tokenize(cleaned)))
-        match_content = self._question_content[row_id]
+        match_content = self._question_content[pos]
         shared = query_content & match_content
         denom = len(query_content) + len(match_content)
         dice = 2 * len(shared) / denom if denom else 0.0
 
         return RetrievalCandidate(
             row_id=row_id,
-            matched_question=self._questions[row_id],
-            response=self._responses[row_id],
+            matched_question=self._questions[pos],
+            response=self._responses[pos],
             cosine=best_cosine,
             shared_content_tokens=tuple(sorted(shared)),
             dice=dice,

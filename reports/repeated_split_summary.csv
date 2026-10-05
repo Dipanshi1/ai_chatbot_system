@@ -1,0 +1,4 @@
+model,mean,std,min,median,max,n_seeds_best_strict,n_seeds_best_or_tied,canonical_accuracy,share_of_seeds_at_or_above_canonical
+logistic_regression,0.258333,0.068018,0.125,0.275,0.375,0,0,0.425,0.0
+linear_svm,0.405833,0.063884,0.25,0.4125,0.525,29,30,0.5,0.1
+multinomial_nb,0.206667,0.077663,0.075,0.225,0.375,0,1,0.375,0.033333
