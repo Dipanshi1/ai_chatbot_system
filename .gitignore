@@ -24,7 +24,10 @@ env/
 Thumbs.db
 
 # ML artifacts
-artifacts/
+artifacts/*
+!artifacts/intent_model.pkl
+!artifacts/tfidf_vectorizer.pkl
+!artifacts/manifest.json
 
 # Temporary files
 *.log

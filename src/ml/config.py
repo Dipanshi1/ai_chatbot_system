@@ -17,6 +17,18 @@ RAW_DATA_PATH = DATA_DIR / "raw" / "AI-Powered Chatbot.xlsx"
 ARTIFACTS_DIR = BASE_DIR / "artifacts"
 MODEL_PATH = ARTIFACTS_DIR / "intent_model.pkl"
 VECTORIZER_PATH = ARTIFACTS_DIR / "tfidf_vectorizer.pkl"
+MANIFEST_PATH = ARTIFACTS_DIR / "manifest.json"
+
+# Reports directory
+REPORTS_DIR = BASE_DIR / "reports"
+
+# Dataset and modeling configuration (Phase 5A)
+TEST_SIZE = 0.20
+SPLIT_RANDOM_STATE = 42
+MODEL_RANDOM_STATE = 42
+
+REQUIRED_COLUMNS = ("User Message", "Intent", "Bot Response")
+MAX_MESSAGE_CHARS = 500
 
 # ---------------------------------------------------------------------------
 # Safety policy (Phase 4)
