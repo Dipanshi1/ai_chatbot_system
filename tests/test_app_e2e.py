@@ -76,13 +76,17 @@ class TestAppEndToEnd(unittest.TestCase):
         at.chat_input[0].set_value("When will my financial aid be disbursed?").run()
         self.assertEqual(len(at.exception), 0)
         self.assertEqual(len(at.chat_message), 3)  # greeting, user, assistant
-        self.assertIn("Disbursement", _rendered_text(at))
+        text = _rendered_text(at)
+        self.assertIn("Disbursement", text)
+        self.assertIn("Verified Knowledge Base Answer", text)
 
     def test_unsupported_query_follows_fallback_or_abstention(self):
         at = self.run_app()
         at.chat_input[0].set_value("zzz qqq").run()
         self.assertEqual(len(at.exception), 0)
-        self.assertIn("not sure", _rendered_text(at).lower())
+        text = _rendered_text(at)
+        self.assertIn("not sure", text.lower())
+        self.assertIn("Clarification Requested", text)
 
     def test_overlong_input_is_rejected_without_calling_pipeline(self):
         at = self.run_app()

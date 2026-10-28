@@ -67,7 +67,7 @@ def render_assistant_message(content: str, result: ChatResult = None, error: str
 
     # Outcome explanation
     badge = format_outcome_badge(result.outcome)
-    st.caption(f"ℹ️ {badge['explanation']}")
+    st.caption(f"ℹ️ **{badge['title']}** — {badge['explanation']}")
 
     # Technical diagnostics expander
     with st.expander("🔍 View system diagnostics"):
@@ -130,13 +130,17 @@ def main() -> None:
         )
         st.stop()
 
-    # 2. Main title and header
+    # 2. Session state initialization (guaranteed before widget interactions)
+    if "messages" not in st.session_state:
+        st.session_state.messages = get_initial_messages()
+
+    # 3. Main title and header
     st.title(f"🎓 {PAGE_TITLE}")
     st.markdown(f"**{PAGE_SUBTITLE}**")
     st.caption(f"*{DISCLAIMER_TEXT}*")
     st.divider()
 
-    # 3. Sidebar setup
+    # 4. Sidebar setup
     with st.sidebar:
         st.header("About")
         st.markdown(ABOUT_TEXT)
@@ -149,18 +153,16 @@ def main() -> None:
                 process_user_query(example_query, pipeline)
 
         st.header("System Information")
-        st.text(f"Model: {pipeline.model_version}")
-        st.text(f"KB:    {pipeline.kb_version}")
-        st.text(f"Policy: {pipeline.policy_version}")
+        st.markdown(
+            f"- **Model**: `{pipeline.model_version}`\n"
+            f"- **KB**: `{pipeline.kb_version}`\n"
+            f"- **Policy**: `{pipeline.policy_version}`"
+        )
 
         st.header("Conversation")
         if st.button("🗑️ Clear Conversation", use_container_width=True):
             st.session_state.messages = get_initial_messages()
             st.rerun()
-
-    # 4. Session state initialization
-    if "messages" not in st.session_state:
-        st.session_state.messages = get_initial_messages()
 
     # 5. Render conversation history
     for msg in st.session_state.messages:
