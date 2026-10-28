@@ -22,3 +22,14 @@ This document records architectural, documentation, and verification decisions e
 
 ## 5. Security & Secret Exposure
 - **Decision**: Confirm via `git grep` and `git ls-files` that no API keys, credentials, tokens, or environment files are tracked. Document the zero-secret status in release verification reports.
+
+---
+
+## Stage A UI error-handling fix (2026-10-28)
+- **Decision (user-authorized submission fix)**: `app.py` no longer renders raw exception text. Query
+  failures show only the generic error message; startup failures show a generic message with the local
+  verification command. Details are logged server-side via `logging`.
+- **Rationale**: user-facing output must not expose stack traces, paths or internal details
+  (`CLAUDE.md` §7). No ML behaviour, artifacts or dependencies changed.
+- **Tests**: new `tests/test_app_e2e.py` (Streamlit `AppTest`): startup, supported query, fallback,
+  over-long input, example button + clear, and two leak-prevention tests (query and startup failures).

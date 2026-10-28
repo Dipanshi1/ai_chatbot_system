@@ -273,7 +273,7 @@ When evaluated over the 40 test queries against a leakage-free train-only knowle
 │       ├── __init__.py
 │       └── helpers.py             # UI validation, copy text, diagnostics
 │
-└── tests/                         # Comprehensive unit test suite (112 tests)
+└── tests/                         # Unit, integration and Streamlit end-to-end tests (119 tests)
     ├── test_artifacts.py          # Manifest & hash verification tests
     ├── test_data.py               # Dataset loading & splitting tests
     ├── test_evaluation.py        # Metrics, Wilson CIs, & equivalence tests
@@ -349,7 +349,7 @@ python src/evaluate.py
 
 ## Running Tests
 
-Execute the complete automated unit test suite (112 unit tests):
+Execute the complete automated test suite (119 tests, including Streamlit end-to-end tests):
 ```bash
 python -m unittest discover -s tests -p "test_*.py" -v
 ```

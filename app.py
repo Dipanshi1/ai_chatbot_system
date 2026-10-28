@@ -4,6 +4,7 @@ Streamlit Web Application for University Student Support (Phase 5C).
 A thin, restrained presentation layer for student support questions.
 Delegates all intent classification and response gating to src.ml.answer().
 """
+import logging
 from pathlib import Path
 import sys
 
@@ -29,6 +30,8 @@ from src.ui.helpers import (
     validate_user_message,
 )
 
+logger = logging.getLogger(__name__)
+
 # Configure page settings
 st.set_page_config(
     page_title=PAGE_TITLE,
@@ -50,12 +53,13 @@ def load_cached_pipeline() -> ChatPipeline:
 
 
 def render_assistant_message(content: str, result: ChatResult = None, error: str = None) -> None:
-    """Render an assistant response with outcome indicators and optional diagnostics."""
+    """Render an assistant response with outcome indicators and optional diagnostics.
+
+    Internal error details are never rendered; they are logged server-side only.
+    """
     st.markdown(content)
 
     if error:
-        with st.expander("Technical details"):
-            st.code(error)
         return
 
     if result is None:
@@ -95,7 +99,8 @@ def process_user_query(query_text: str, pipeline: ChatPipeline) -> None:
                 "result": res,
             }
         )
-    except Exception as exc:
+    except Exception:
+        logger.exception("Pipeline failed while answering a query")
         st.session_state.messages.append(
             {
                 "role": "assistant",
@@ -104,7 +109,7 @@ def process_user_query(query_text: str, pipeline: ChatPipeline) -> None:
                     "Please try again or contact campus support."
                 ),
                 "result": None,
-                "error": str(exc),
+                "error": True,
             }
         )
 
@@ -115,10 +120,13 @@ def main() -> None:
     # 1. Startup & artifact loading with safe error boundary
     try:
         pipeline = load_cached_pipeline()
-    except Exception as exc:
+    except Exception:
+        logger.exception("Artifact verification or pipeline loading failed at startup")
         st.error(
-            "Application Startup Failure: Artifact verification or pipeline loading failed.\n\n"
-            f"Details: {exc}"
+            "Application Startup Failure: Artifact verification or pipeline loading failed. "
+            "Check the server log, or run "
+            "`python -c \"from src.ml.artifacts import verify_artifacts; verify_artifacts()\"` "
+            "from the project root."
         )
         st.stop()
 
