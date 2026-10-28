@@ -155,8 +155,15 @@
       "wilcoxon_significant": true,
       "safety_guardrail_holds": true,
       "resource_gates_hold": true,
-      "provisional": true,
-      "provisional_reason": "guardrails 1-2 require human confirmation"
+      "provisional": false,
+      "provisional_reason": "none \u2014 the quantitative category is final; see overall_acceptance",
+      "guardrails_human_review": {
+        "guardrail_1": "violated",
+        "guardrail_2": "violated"
+      },
+      "overall_acceptance": "withheld",
+      "overall_acceptance_reason": "both guardrails are marked violated under the current operational definitions (human review, 2026-10-29)",
+      "reporting_decision": "Explicit post-evaluation reporting decision by the project owner: keep the quantitative category 'Meaningful improvement' as the benchmark result and withhold overall acceptance because both guardrails are violated. Not a rule from the unavailable specification; the measured improvement is not relabelled as a regression."
     }
   },
   "summary": {
@@ -7050,7 +7057,7 @@
         "b1": "WRONG_INTENT"
       }
     ],
-    "guardrail_1_status": "pending_human_confirmation",
+    "guardrail_1_status": "violated",
     "guardrail_2_rank1_score_distributions": {
       "stage_a_tfidf:negatives_N": {
         "n": 14,
@@ -7077,7 +7084,9 @@
         "max": 0.9083946235645382
       }
     },
-    "guardrail_2_status": "pending_human_confirmation"
+    "guardrail_2_status": "violated",
+    "guardrail_1_human_note": "Human review (2026-10-29): violated under the implemented operational definition (a positive query where Stage A ranks an acceptable row first and B1 does not). One observed case: CH_055 \u2014 Stage A ranks acceptable row 162 first; B1 ranks non-acceptable row 98 first and 162 second. The authoritative specification was unavailable and provided no severity threshold; this interpretation is not claimed to come from it.",
+    "guardrail_2_human_note": "Human review (2026-10-29): reliable score separation for unanswerable queries was not demonstrated. B1 rank-1 score p95 0.806 on negatives vs 0.796 on P*; medians 0.560 vs 0.613. Qualitative criterion: no threshold was found in the repository; 'violated' is used because a binary status is recorded."
   },
   "resources": {
     "gates": {
