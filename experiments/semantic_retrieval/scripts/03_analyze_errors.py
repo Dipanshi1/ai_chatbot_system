@@ -47,20 +47,31 @@ def main() -> int:
         out.append({**{k: r[k] for k in FIELDS if k in r},
                     "failure_level": "intent" if r["outcome_class"] == "WRONG_INTENT" else "row_only",
                     "signatures": ";".join(sig), "primary_tag": ev.primary_failure_tag(sig), "human_tag": ""})
+    if config.FAILURE_CSV_PATH.exists():
+        with open(config.FAILURE_CSV_PATH, encoding="utf-8") as f:
+            out, dropped = ev.merge_human_tags(out, list(csv.DictReader(f)))
+        if dropped and "--allow-dropped-tags" not in sys.argv:
+            print("ABORT: rerun would drop human tags for "
+                  f"{[(d['challenge_id'], d['human_tag']) for d in dropped]} (failure gone or rank-1 changed). "
+                  "Re-review, or rerun with --allow-dropped-tags.")
+            return 1
     with open(config.FAILURE_CSV_PATH, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=FIELDS, lineterminator="\n")
         w.writeheader()
         w.writerows(out)
     counts = Counter(o["primary_tag"] for o in out)
-    category = None
+    outcome = {}
     if config.METRICS_JSON_PATH.exists():
-        category = json.loads(config.METRICS_JSON_PATH.read_text())["primary"]["outcome"]["category"]
-    representation = sum(counts.get(t, 0) for t in ("F1", "F4"))
+        outcome = json.loads(config.METRICS_JSON_PATH.read_text())["primary"]["outcome"]
+    category = outcome.get("category")
+    final = [o["human_tag"] or o["primary_tag"] for o in out]
+    representation = sum(t in ("F1", "F2", "F4") for t in final)
+    accepted = category == "Meaningful improvement" and outcome.get("overall_acceptance") != "withheld"
     print(f"failures: {len(out)} | primary tags: {dict(counts)}")
-    print(f"UNASSIGNED (need human tag, e.g. F2): {counts.get('UNASSIGNED', 0)}")
-    print(f"outcome category (provisional): {category}")
-    print(f"alternative-model condition: MiniLM meets success criteria = {category == 'Meaningful improvement'}; "
-          f"representation-related failures (F1+F4, plus any human F2) = {representation}. "
+    print(f"after human tags: {dict(Counter(final))} | still UNASSIGNED: {final.count('UNASSIGNED')}")
+    print(f"outcome category: {category} | overall acceptance: {outcome.get('overall_acceptance', 'not recorded')}")
+    print(f"alternative-model condition: MiniLM accepted = {accepted}; "
+          f"representation-related failures (F1+F2+F4, final tags) = {representation}. "
           "Decision is human; no alternative model was run.")
     print(f"wrote {config.FAILURE_CSV_PATH}")
     return 0
