@@ -1,0 +1,808 @@
+[
+ {
+  "challenge_id": "CH_065",
+  "tier": "P1",
+  "decision": {
+   "target_intent": "course_registration",
+   "acceptable_row_ids": "47;99;108",
+   "preferred_row_id": "47",
+   "query_valid": true,
+   "source": "explicit human decision, batch 1 (restated in batch 3 message)"
+  }
+ },
+ {
+  "challenge_id": "CH_069",
+  "tier": "P1",
+  "decision": {
+   "target_intent": "research_support",
+   "acceptable_row_ids": "73",
+   "preferred_row_id": "73",
+   "query_valid": true,
+   "source": "explicit human decision, batch 2"
+  }
+ },
+ {
+  "challenge_id": "CH_070",
+  "tier": "P1",
+  "decision": {
+   "target_intent": "safety",
+   "acceptable_row_ids": "163",
+   "preferred_row_id": "163",
+   "query_valid": true,
+   "source": "explicit human decision, batch 2"
+  }
+ },
+ {
+  "challenge_id": "CH_089",
+  "tier": "P1",
+  "decision": {
+   "target_intent": "academic_policies",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch 2"
+  }
+ },
+ {
+  "challenge_id": "CH_090",
+  "tier": "P1",
+  "decision": {
+   "target_intent": "housing",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch 2"
+  }
+ },
+ {
+  "challenge_id": "CH_014",
+  "tier": "P2",
+  "decision": {
+   "target_intent": "campus_facilities",
+   "acceptable_row_ids": "1",
+   "preferred_row_id": "1",
+   "query_valid": true,
+   "source": "explicit human decision, batch 3 (approve current labels)"
+  }
+ },
+ {
+  "challenge_id": "CH_040",
+  "tier": "P2",
+  "decision": {
+   "target_intent": "campus_facilities",
+   "acceptable_row_ids": "139",
+   "preferred_row_id": "139",
+   "query_valid": true,
+   "source": "explicit human decision, batch 3 (approve current labels)"
+  }
+ },
+ {
+  "challenge_id": "CH_052",
+  "tier": "P2",
+  "decision": {
+   "target_intent": "academic_advising",
+   "acceptable_row_ids": "64",
+   "preferred_row_id": "64",
+   "query_valid": true,
+   "source": "explicit human decision, batch 3 (approve current labels)"
+  }
+ },
+ {
+  "challenge_id": "CH_060",
+  "tier": "P2",
+  "decision": {
+   "target_intent": "campus_facilities",
+   "acceptable_row_ids": "19",
+   "preferred_row_id": "19",
+   "query_valid": true,
+   "source": "explicit human decision, batch 3 (approve current labels)"
+  }
+ },
+ {
+  "challenge_id": "CH_001",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "academic_advising",
+   "acceptable_row_ids": "8;160",
+   "preferred_row_id": "8",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_005",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "academic_policies",
+   "acceptable_row_ids": "17;188",
+   "preferred_row_id": "17",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_007",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "academic_policies",
+   "acceptable_row_ids": "57;130",
+   "preferred_row_id": "130",
+   "query_valid": true,
+   "source": "explicit human decision, batch 4 (approve current labels)"
+  }
+ },
+ {
+  "challenge_id": "CH_026",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "housing",
+   "acceptable_row_ids": "32;196",
+   "preferred_row_id": "32",
+   "query_valid": true,
+   "source": "explicit human decision, batch 4 (approve current labels)"
+  }
+ },
+ {
+  "challenge_id": "CH_027",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "mental_health",
+   "acceptable_row_ids": "7;23",
+   "preferred_row_id": "23",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_031",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "academic_policies",
+   "acceptable_row_ids": "17;188",
+   "preferred_row_id": "188",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_032",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "academic_policies",
+   "acceptable_row_ids": "57",
+   "preferred_row_id": "57",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_049",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "safety",
+   "acceptable_row_ids": "102;151",
+   "preferred_row_id": "151",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_051",
+  "tier": "P3",
+  "decision": {
+   "target_intent": "mental_health",
+   "acceptable_row_ids": "7;23",
+   "preferred_row_id": "7",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_029",
+  "tier": "P4",
+  "decision": {
+   "target_intent": "academic_advising",
+   "acceptable_row_ids": "52",
+   "preferred_row_id": "52",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_062",
+  "tier": "P4",
+  "decision": {
+   "target_intent": "campus_facilities",
+   "acceptable_row_ids": "58",
+   "preferred_row_id": "58",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_073",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "housing",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_075",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "campus_facilities",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_078",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "safety",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_079",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "academic_policies",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_080",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "technical_issue",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_081",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "financial_aid",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_082",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "housing",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_083",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "academic_advising",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_084",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "mental_health",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_085",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "research_support",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_086",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "administration",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_088",
+  "tier": "P5-neg",
+  "decision": {
+   "target_intent": "course_information",
+   "negative": "retain",
+   "acceptable_row_ids": "",
+   "preferred_row_id": "",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_002",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "academic_advising",
+   "acceptable_row_ids": "22",
+   "preferred_row_id": "22",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_003",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "academic_advising",
+   "acceptable_row_ids": "25",
+   "preferred_row_id": "25",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_008",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "accessibility",
+   "acceptable_row_ids": "110",
+   "preferred_row_id": "110",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_009",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "accessibility",
+   "acceptable_row_ids": "194",
+   "preferred_row_id": "194",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_010",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "administration",
+   "acceptable_row_ids": "11",
+   "preferred_row_id": "11",
+   "query_valid": true,
+   "source": "explicit human decision, batch A"
+  }
+ },
+ {
+  "challenge_id": "CH_012",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "technical_issue",
+   "acceptable_row_ids": "2",
+   "preferred_row_id": "2",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_013",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "administration",
+   "acceptable_row_ids": "181",
+   "preferred_row_id": "181",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_015",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "campus_facilities",
+   "acceptable_row_ids": "51",
+   "preferred_row_id": "51",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_016",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "student_services",
+   "acceptable_row_ids": "70",
+   "preferred_row_id": "70",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_018",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "career_services",
+   "acceptable_row_ids": "90",
+   "preferred_row_id": "90",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_020",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "course_registration",
+   "acceptable_row_ids": "71",
+   "preferred_row_id": "71",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_021",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "course_registration",
+   "acceptable_row_ids": "80",
+   "preferred_row_id": "80",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_022",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "financial_aid",
+   "acceptable_row_ids": "3",
+   "preferred_row_id": "3",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_023",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "financial_aid",
+   "acceptable_row_ids": "33",
+   "preferred_row_id": "33",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_025",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "safety",
+   "acceptable_row_ids": "102",
+   "preferred_row_id": "102",
+   "query_valid": true,
+   "source": "explicit human decision, batch B"
+  }
+ },
+ {
+  "challenge_id": "CH_028",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "research_support",
+   "acceptable_row_ids": "145",
+   "preferred_row_id": "145",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_030",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "academic_advising",
+   "acceptable_row_ids": "103",
+   "preferred_row_id": "103",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_033",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "academic_support",
+   "acceptable_row_ids": "143",
+   "preferred_row_id": "143",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_034",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "academic_support",
+   "acceptable_row_ids": "159",
+   "preferred_row_id": "159",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_035",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "accessibility",
+   "acceptable_row_ids": "40",
+   "preferred_row_id": "40",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_036",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "administration",
+   "acceptable_row_ids": "62",
+   "preferred_row_id": "62",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_038",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "administration",
+   "acceptable_row_ids": "107",
+   "preferred_row_id": "107",
+   "query_valid": true,
+   "source": "explicit human decision, batch B"
+  }
+ },
+ {
+  "challenge_id": "CH_039",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "campus_facilities",
+   "acceptable_row_ids": "12",
+   "preferred_row_id": "12",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_042",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "career_services",
+   "acceptable_row_ids": "117",
+   "preferred_row_id": "117",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_043",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "course_registration",
+   "acceptable_row_ids": "173",
+   "preferred_row_id": "173",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_045",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "financial_aid",
+   "acceptable_row_ids": "72",
+   "preferred_row_id": "72",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_047",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "housing",
+   "acceptable_row_ids": "89",
+   "preferred_row_id": "89",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_048",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "mental_health",
+   "acceptable_row_ids": "85",
+   "preferred_row_id": "85",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_050",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "technical_issue",
+   "acceptable_row_ids": "46",
+   "preferred_row_id": "46",
+   "query_valid": true,
+   "source": "explicit human decision, batch B (approved checklist)"
+  }
+ },
+ {
+  "challenge_id": "CH_053",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "academic_policies",
+   "acceptable_row_ids": "114",
+   "preferred_row_id": "114",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_054",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "academic_support",
+   "acceptable_row_ids": "27",
+   "preferred_row_id": "27",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_055",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "academic_support",
+   "acceptable_row_ids": "162",
+   "preferred_row_id": "162",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_057",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "accessibility",
+   "acceptable_row_ids": "140",
+   "preferred_row_id": "140",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_058",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "administration",
+   "acceptable_row_ids": "88",
+   "preferred_row_id": "88",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_063",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "career_services",
+   "acceptable_row_ids": "166",
+   "preferred_row_id": "166",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_066",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "financial_aid",
+   "acceptable_row_ids": "35",
+   "preferred_row_id": "35",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_067",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "housing",
+   "acceptable_row_ids": "49",
+   "preferred_row_id": "49",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_068",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "mental_health",
+   "acceptable_row_ids": "61",
+   "preferred_row_id": "61",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_071",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "technical_issue",
+   "acceptable_row_ids": "42",
+   "preferred_row_id": "42",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ },
+ {
+  "challenge_id": "CH_072",
+  "tier": "P6",
+  "decision": {
+   "target_intent": "student_services",
+   "acceptable_row_ids": "168",
+   "preferred_row_id": "168",
+   "query_valid": true,
+   "source": "explicit human decision, batch C"
+  }
+ }
+]

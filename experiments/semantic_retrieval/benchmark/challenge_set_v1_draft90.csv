@@ -1,0 +1,91 @@
+challenge_id,query_text,target_intent,acceptable_row_ids,preferred_row_id,difficulty_category,dice_to_preferred,max_dice_to_acceptable,max_dice_to_any_kb_row,dice_bucket,review_status,notes
+CH_001,Is it possible to switch my field of study?,,,,synonym_substitution,,,,,draft,drafted from row 8
+CH_002,How do I add a secondary specialization to my degree?,,,,synonym_substitution,,,,,draft,drafted from row 22
+CH_003,What is the total number of units required to finish my degree?,,,,synonym_substitution,,,,,draft,drafted from row 25
+CH_004,Can I sit in on a lecture without earning a grade?,,,,synonym_substitution,,,,,draft,drafted from row 20
+CH_005,How do I contest the mark I received?,,,,synonym_substitution,,,,,draft,drafted from row 17
+CH_006,Can I get more time to hand in my homework?,,,,synonym_substitution,,,,,draft,drafted from row 14
+CH_007,Where do I flag someone copying another person's work?,,,,synonym_substitution,,,,,draft,drafted from row 130
+CH_008,What adjustments can I receive for tests because of a disability?,,,,synonym_substitution,,,,,draft,drafted from row 110
+CH_009,Can I bring my guide dog to class?,,,,synonym_substitution,,,,,draft,drafted from row 194
+CH_010,How do I order a copy of my academic record?,,,,synonym_substitution,,,,,draft,drafted from row 11
+CH_011,How can I take a break from my studies for health reasons?,,,,synonym_substitution,,,,,draft,drafted from row 44
+CH_012,I can't remember the login for my student account.,,,,synonym_substitution,,,,,draft,drafted from row 2
+CH_013,Where do I collect my campus identity card?,,,,synonym_substitution,,,,,draft,drafted from row 181
+CH_014,What are the opening hours of the library on Saturday and Sunday?,,,,synonym_substitution,,,,,draft,drafted from row 1
+CH_015,How do I fight a fine for my car?,,,,synonym_substitution,,,,,draft,drafted from row 51
+CH_016,Is there a free attorney service for learners?,,,,synonym_substitution,,,,,draft,drafted from row 70
+CH_017,Is printing free of charge?,,,,synonym_substitution,,,,,draft,drafted from row 81
+CH_018,How can I get feedback on my resume?,,,,synonym_substitution,,,,,draft,drafted from row 90
+CH_019,How can I practice for job interviews?,,,,synonym_substitution,,,,,draft,drafted from row 96
+CH_020,How do I sign up for courses during the summer break?,,,,synonym_substitution,,,,,draft,drafted from row 71
+CH_021,Can I change to a different lab group?,,,,synonym_substitution,,,,,draft,drafted from row 80
+CH_022,Is financial help offered to overseas students?,,,,synonym_substitution,,,,,draft,drafted from row 3
+CH_023,Will I get my money back for a course I withdrew from?,,,,synonym_substitution,,,,,draft,drafted from row 33
+CH_024,How do I change the card I use to pay my fees?,,,,synonym_substitution,,,,,draft,drafted from row 112
+CH_025,Where can I report being bullied by a classmate?,,,,synonym_substitution,,,,,draft,drafted from row 102
+CH_026,Is there a place to stay urgently if my apartment becomes unlivable?,,,,synonym_substitution,,,,,draft,drafted from row 32
+CH_027,Who can I talk to if exams are stressing me out?,,,,synonym_substitution,,,,,draft,drafted from row 23
+CH_028,How do I obtain grants for my research project?,,,,synonym_substitution,,,,,draft,drafted from row 145
+CH_029,Would it be possible for me to have a conversation with an academic advisor at this moment?,,,,syntactic_inversion,,,,,draft,drafted from row 52
+CH_030,"Regarding credits earned at another institution, what is the procedure for getting them recognised?",,,,syntactic_inversion,,,,,draft,drafted from row 103
+CH_031,"Could the grading of my exam be checked a second time, and if so, how?",,,,syntactic_inversion,,,,,draft,drafted from row 188
+CH_032,"Should a student witness cheating, to whom ought it be reported?",,,,syntactic_inversion,,,,,draft,drafted from row 57
+CH_033,"From whom, and by what process, might a letter of reference be obtained?",,,,syntactic_inversion,,,,,draft,drafted from row 143
+CH_034,Is assistance offered to students who are writing research papers in the sciences?,,,,syntactic_inversion,,,,,draft,drafted from row 159
+CH_035,Could you kindly explain the steps required to arrange support for a disability?,,,,syntactic_inversion,,,,,draft,drafted from row 40
+CH_036,My personal details have changed; where should they be updated?,,,,syntactic_inversion,,,,,draft,drafted from row 62
+CH_037,"In case something happens to me, how would I list a relative to be notified?",,,,syntactic_inversion,,,,,draft,drafted from row 92
+CH_038,"Before I finish my final year, what must be done so that I can graduate?",,,,syntactic_inversion,,,,,draft,drafted from row 107
+CH_039,"With regard to parking, what rules apply to students who drive to campus?",,,,syntactic_inversion,,,,,draft,drafted from row 12
+CH_040,At what times does the bus that goes around campus run?,,,,syntactic_inversion,,,,,draft,drafted from row 139
+CH_041,Could a meeting room somewhere on campus be booked by me?,,,,syntactic_inversion,,,,,draft,drafted from row 136
+CH_042,"If I wanted a part-time position at the university itself, how would I go about it?",,,,syntactic_inversion,,,,,draft,drafted from row 117
+CH_043,"When a class has no seats left, is there some way of being placed on a list?",,,,syntactic_inversion,,,,,draft,drafted from row 173
+CH_044,"After a course has already begun, is joining it still permitted?",,,,syntactic_inversion,,,,,draft,drafted from row 99
+CH_045,"If a student is facing a sudden financial crisis, is any money available to help?",,,,syntactic_inversion,,,,,draft,drafted from row 72
+CH_046,Is there anyone who can advise me on how to manage my money?,,,,syntactic_inversion,,,,,draft,drafted from row 116
+CH_047,By which date must a request to move to a different room be submitted?,,,,syntactic_inversion,,,,,draft,drafted from row 89
+CH_048,Will what I share with a therapist be kept private?,,,,syntactic_inversion,,,,,draft,drafted from row 85
+CH_049,"If an instructor or classmates make the classroom feel threatening, where is that reported?",,,,syntactic_inversion,,,,,draft,drafted from row 151
+CH_050,"Should my two-step login stop working, how is it reset?",,,,syntactic_inversion,,,,,draft,drafted from row 46
+CH_051,finals are freaking me out lol,,,,slang_informal,,,,,draft,drafted from row 7
+CH_052,can i skip the prereq for a class??,,,,slang_informal,,,,,draft,drafted from row 64
+CH_053,wanna ditch a class without it messing up my record,,,,slang_informal,,,,,draft,drafted from row 114
+CH_054,"how do i cite stuff in my thesis, apa or whatever",,,,slang_informal,,,,,draft,drafted from row 27
+CH_055,need a tutor asap,,,,slang_informal,,,,,draft,drafted from row 162
+CH_056,"i keep putting stuff off till the last minute, any tips?",,,,slang_informal,,,,,draft,drafted from row 189
+CH_057,"pregnant and worried about keeping up w classes, any support?",,,,slang_informal,,,,,draft,drafted from row 140
+CH_058,"lost my uni card, how do i get a new one",,,,slang_informal,,,,,draft,drafted from row 88
+CH_059,can i push back starting uni till next year,,,,slang_informal,,,,,draft,drafted from row 111
+CH_060,any plant based food at the canteen?,,,,slang_informal,,,,,draft,drafted from row 19
+CH_061,gym still open at like 10pm?,,,,slang_informal,,,,,draft,drafted from row 41
+CH_062,"left my water bottle somewhere on campus, where do lost things go",,,,slang_informal,,,,,draft,drafted from row 58
+CH_063,wanna chat w a career person this week,,,,slang_informal,,,,,draft,drafted from row 166
+CH_064,any hiring events on campus soon?,,,,slang_informal,,,,,draft,drafted from row 192
+CH_065,"missed the signup window for classes, am i screwed",,,,slang_informal,,,,,draft,drafted from row 47
+CH_066,my aid amount looks totally off,,,,slang_informal,,,,,draft,drafted from row 35
+CH_067,"my roomie keeps breaking the dorm rules, who do i tell",,,,slang_informal,,,,,draft,drafted from row 49
+CH_068,"need someone to talk to at 2am, is anyone there",,,,slang_informal,,,,,draft,drafted from row 61
+CH_069,can i use the lab stuff on weekends,,,,slang_informal,,,,,draft,drafted from row 73
+CH_070,my friend just collapsed on campus what do i do,,,,slang_informal,,,,,draft,drafted from row 163
+CH_071,my uni inbox isnt getting any emails,,,,slang_informal,,,,,draft,drafted from row 42
+CH_072,"kinda broke and cant afford groceries, any help?",,,,slang_informal,,,,,draft,drafted from row 168
+CH_073,Is the library hiring student workers on weekends?,,,,distractor_negative,,,,,draft,drafted from row 1
+CH_074,What's the attendance policy for students in online classes?,,,,distractor_negative,,,,,draft,drafted from row 12
+CH_075,Is the computer lab open late during exam week?,,,,distractor_negative,,,,,draft,drafted from row 41
+CH_076,Can I appeal a parking ticket?,,,,distractor_negative,,,,,draft,drafted from row 17
+CH_077,How do I connect with other students in my major?,,,,distractor_negative,,,,,draft,drafted from row 86
+CH_078,Can I borrow a projector for my club event?,,,,distractor_negative,,,,,draft,drafted from row 21
+CH_079,Is robotics offered as a minor?,,,,distractor_negative,,,,,draft,drafted from row 34
+CH_080,Is MATH201 a prerequisite for statistics?,,,,distractor_negative,,,,,draft,drafted from row 24
+CH_081,Are international students allowed to work off campus?,,,,distractor_negative,,,,,draft,drafted from row 3
+CH_082,Are there housing options for visiting faculty next semester?,,,,distractor_negative,,,,,draft,drafted from row 10
+CH_083,Can I apply research methods credits toward my minor?,,,,distractor_negative,,,,,draft,drafted from row 145
+CH_084,Is stress testing covered in the engineering curriculum?,,,,distractor_negative,,,,,draft,drafted from row 23
+CH_085,Where can I find crime statistics for a sociology paper?,,,,distractor_negative,,,,,draft,drafted from row 29
+CH_086,Where do I pick up my graduation gown?,,,,distractor_negative,,,,,draft,drafted from row 181
+CH_087,"I forgot my calculator for the exam, can I borrow one?",,,,distractor_negative,,,,,draft,drafted from row 2
+CH_088,Is there a daycare management course on campus?,,,,distractor_negative,,,,,draft,drafted from row 36
+CH_089,Will a dropped class show up on my transcript?,,,,distractor_negative,,,,,draft,drafted from row 33
+CH_090,How do I report a bug infestation in my dorm room?,,,,distractor_negative,,,,,draft,drafted from row 191

@@ -1,0 +1,73 @@
+challenge_id,query_text,target_intent,acceptable_row_ids,preferred_row_id,difficulty_category,dice_to_preferred,max_dice_to_acceptable,max_dice_to_any_kb_row,dice_bucket,review_status,notes
+CH_001,Is it possible to switch my field of study?,academic_advising,8;160,8,synonym_substitution,0.000000,0.000000,0.285714,B1,draft,drafted from row 8; major change forms in advising
+CH_002,How do I add a secondary specialization to my degree?,academic_advising,22,22,synonym_substitution,0.000000,0.000000,0.285714,B1,draft,drafted from row 22; minor declaration
+CH_003,What is the total number of units required to finish my degree?,academic_advising,25,25,synonym_substitution,0.000000,0.000000,0.222222,B1,draft,drafted from row 25; graduation credit requirements
+CH_005,How do I contest the mark I received?,academic_policies,17;188,17,synonym_substitution,0.000000,0.000000,0.000000,B1,draft,drafted from row 17; grade appeal and recount options
+CH_007,Where do I flag someone copying another person's work?,academic_policies,57;130,130,synonym_substitution,0.000000,0.000000,0.000000,B1,draft,drafted from row 130; academic integrity/plagiarism reporting
+CH_008,What adjustments can I receive for tests because of a disability?,accessibility,110,110,synonym_substitution,0.285714,0.285714,0.285714,B2,draft,drafted from row 110; exam disability accommodation
+CH_009,Can I bring my guide dog to class?,accessibility,194,194,synonym_substitution,0.000000,0.000000,0.333333,B1,draft,drafted from row 194; service animal accommodation
+CH_010,How do I order a copy of my academic record?,administration,11,11,synonym_substitution,0.000000,0.000000,0.285714,B1,draft,drafted from row 11; official transcript request
+CH_012,I can't remember the login for my student account.,technical_issue,2,2,synonym_substitution,0.250000,0.250000,0.285714,B2,draft,drafted from row 2; portal password reset
+CH_013,Where do I collect my campus identity card?,administration,181,181,synonym_substitution,0.000000,0.000000,0.333333,B1,draft,drafted from row 181; student ID pickup at Card Services
+CH_014,What are the opening hours of the library on Saturday and Sunday?,campus_facilities,1,1,synonym_substitution,0.250000,0.250000,0.400000,B2,draft,drafted from row 1; library weekend hours
+CH_015,How do I fight a fine for my car?,campus_facilities,51,51,synonym_substitution,0.000000,0.000000,0.000000,B1,draft,drafted from row 51; parking ticket dispute portal
+CH_016,Is there a free attorney service for learners?,student_services,70,70,synonym_substitution,0.250000,0.250000,0.285714,B2,draft,drafted from row 70; student legal clinic consultations
+CH_018,How can I get feedback on my resume?,career_services,90,90,synonym_substitution,0.000000,0.000000,0.000000,B1,draft,drafted from row 90; CV review by Career Services
+CH_020,How do I sign up for courses during the summer break?,course_registration,71,71,synonym_substitution,0.285714,0.285714,0.285714,B2,draft,drafted from row 71; summer class enrollment
+CH_021,Can I change to a different lab group?,course_registration,80,80,synonym_substitution,0.285714,0.285714,0.333333,B2,draft,drafted from row 80; swap lab sections
+CH_022,Is financial help offered to overseas students?,financial_aid,3,3,synonym_substitution,0.250000,0.250000,0.285714,B2,draft,drafted from row 3; international student scholarships
+CH_023,Will I get my money back for a course I withdrew from?,financial_aid,33,33,synonym_substitution,0.000000,0.000000,0.400000,B1,draft,drafted from row 33; tuition refund for dropped class
+CH_025,Where can I report being bullied by a classmate?,safety,102,102,synonym_substitution,0.400000,0.400000,0.400000,B2,draft,drafted from row 102; harassment/bullying reporting
+CH_026,Is there a place to stay urgently if my apartment becomes unlivable?,housing,32;196,32,synonym_substitution,0.000000,0.000000,0.000000,B1,draft,drafted from row 32; emergency displacement housing
+CH_027,Who can I talk to if exams are stressing me out?,mental_health,7;23,23,synonym_substitution,0.000000,0.000000,0.333333,B1,draft,drafted from row 23; finals stress counseling
+CH_028,How do I obtain grants for my research project?,research_support,145,145,synonym_substitution,0.285714,0.285714,0.285714,B2,draft,drafted from row 145; research funding application
+CH_029,Would it be possible for me to have a conversation with an academic advisor at this moment?,academic_advising,52,52,syntactic_inversion,0.500000,0.500000,0.500000,B3,draft,drafted from row 52; speak to academic advisor
+CH_030,"Regarding credits earned at another institution, what is the procedure for getting them recognised?",academic_advising,103,103,syntactic_inversion,0.000000,0.000000,0.200000,B1,draft,drafted from row 103; transfer credit petition
+CH_031,"Could the grading of my exam be checked a second time, and if so, how?",academic_policies,17;188,188,syntactic_inversion,0.000000,0.000000,0.250000,B1,draft,drafted from row 188; exam grade recount and appeal
+CH_032,"Should a student witness cheating, to whom ought it be reported?",academic_policies,57;130,57,syntactic_inversion,0.000000,0.000000,0.250000,B1,draft,drafted from row 57; academic dishonesty reporting
+CH_033,"From whom, and by what process, might a letter of reference be obtained?",academic_support,143,143,syntactic_inversion,0.333333,0.333333,0.333333,B2,draft,drafted from row 143; recommendation letter request
+CH_034,Is assistance offered to students who are writing research papers in the sciences?,academic_support,159,159,syntactic_inversion,0.200000,0.200000,0.400000,B1,draft,drafted from row 159; writing center scientific writing
+CH_035,Could you kindly explain the steps required to arrange support for a disability?,accessibility,40,40,syntactic_inversion,0.200000,0.200000,0.200000,B1,draft,drafted from row 40; accommodation request form
+CH_036,My personal details have changed; where should they be updated?,administration,62,62,syntactic_inversion,0.285714,0.285714,0.285714,B2,draft,drafted from row 62; update personal profile
+CH_038,"Before I finish my final year, what must be done so that I can graduate?",administration,107,107,syntactic_inversion,0.000000,0.000000,0.285714,B1,draft,drafted from row 107; graduation application checklist
+CH_039,"With regard to parking, what rules apply to students who drive to campus?",campus_facilities,12,12,syntactic_inversion,0.400000,0.400000,0.400000,B2,draft,drafted from row 12; student parking permit policy
+CH_040,At what times does the bus that goes around campus run?,campus_facilities,139,139,syntactic_inversion,0.222222,0.222222,0.250000,B1,draft,drafted from row 139; campus shuttle bus schedule
+CH_042,"If I wanted a part-time position at the university itself, how would I go about it?",career_services,117,117,syntactic_inversion,0.000000,0.000000,0.333333,B1,draft,drafted from row 117; on-campus student jobs
+CH_043,"When a class has no seats left, is there some way of being placed on a list?",course_registration,173,173,syntactic_inversion,0.250000,0.250000,0.250000,B2,draft,drafted from row 173; course waitlist procedure
+CH_045,"If a student is facing a sudden financial crisis, is any money available to help?",financial_aid,72,72,syntactic_inversion,0.333333,0.333333,0.333333,B2,draft,drafted from row 72; student emergency assistance fund
+CH_047,By which date must a request to move to a different room be submitted?,housing,89,89,syntactic_inversion,0.000000,0.000000,0.250000,B1,draft,drafted from row 89; room reassignment deadline
+CH_048,Will what I share with a therapist be kept private?,mental_health,85,85,syntactic_inversion,0.000000,0.000000,0.000000,B1,draft,drafted from row 85; therapy confidentiality
+CH_049,"If an instructor or classmates make the classroom feel threatening, where is that reported?",safety,102;151,151,syntactic_inversion,0.181818,0.181818,0.181818,B1,draft,drafted from row 151; hostile classroom environment reporting
+CH_050,"Should my two-step login stop working, how is it reset?",technical_issue,46,46,syntactic_inversion,0.250000,0.250000,0.250000,B2,draft,drafted from row 46; 2FA reset ticket
+CH_051,finals are freaking me out lol,mental_health,7;23,7,slang_informal,0.333333,0.333333,0.333333,B2,draft,drafted from row 7; anxiety about finals
+CH_052,can i skip the prereq for a class??,academic_advising,64,64,slang_informal,0.000000,0.000000,0.400000,B1,draft,drafted from row 64; prerequisite waiver request
+CH_053,wanna ditch a class without it messing up my record,academic_policies,114,114,slang_informal,0.000000,0.000000,0.285714,B1,draft,drafted from row 114; drop course without penalty
+CH_054,"how do i cite stuff in my thesis, apa or whatever",academic_support,27,27,slang_informal,0.222222,0.222222,0.222222,B1,draft,drafted from row 27; library citation and style guides
+CH_055,need a tutor asap,academic_support,162,162,slang_informal,0.333333,0.333333,0.333333,B2,draft,drafted from row 162; book tutoring session
+CH_057,"pregnant and worried about keeping up w classes, any support?",accessibility,140,140,slang_informal,0.000000,0.000000,0.250000,B1,draft,drafted from row 140; academic accommodations for pregnancy
+CH_058,"lost my uni card, how do i get a new one",administration,88,88,slang_informal,0.000000,0.000000,0.333333,B1,draft,drafted from row 88; replacement ID card
+CH_060,any plant based food at the canteen?,campus_facilities,19,19,slang_informal,0.000000,0.000000,0.285714,B1,draft,drafted from row 19; dining hall vegan options
+CH_062,"left my water bottle somewhere on campus, where do lost things go",campus_facilities,58,58,slang_informal,0.500000,0.500000,0.500000,B3,draft,drafted from row 58; lost and found at security
+CH_063,wanna chat w a career person this week,career_services,166,166,slang_informal,0.444444,0.444444,0.444444,B2,draft,drafted from row 166; career counselor appointment
+CH_065,"missed the signup window for classes, am i screwed",course_registration,47,47,slang_informal,0.000000,0.000000,0.250000,B1,draft,drafted from row 47; late registration policy
+CH_066,my aid amount looks totally off,financial_aid,35,35,slang_informal,0.285714,0.285714,0.285714,B2,draft,drafted from row 35; financial aid package review
+CH_067,"my roomie keeps breaking the dorm rules, who do i tell",housing,49,49,slang_informal,0.181818,0.181818,0.181818,B1,draft,drafted from row 49; roommate rule violations
+CH_068,"need someone to talk to at 2am, is anyone there",mental_health,61,61,slang_informal,0.000000,0.000000,0.333333,B1,draft,drafted from row 61; 24/7 crisis counseling line
+CH_069,can i use the lab stuff on weekends,research_support,73,73,slang_informal,0.200000,0.200000,0.285714,B1,draft,drafted from row 73; after-hours lab access
+CH_070,my friend just collapsed on campus what do i do,safety,163,163,slang_informal,0.250000,0.250000,0.333333,B2,draft,drafted from row 163; campus emergency medical response
+CH_071,my uni inbox isnt getting any emails,technical_issue,42,42,slang_informal,0.000000,0.000000,0.000000,B1,draft,drafted from row 42; student email delivery failure
+CH_072,"kinda broke and cant afford groceries, any help?",student_services,168,168,slang_informal,0.000000,0.000000,0.285714,B1,draft,drafted from row 168; campus food pantry and vouchers
+CH_073,Is the library hiring student workers on weekends?,campus_facilities,,,distractor_negative,,,0.500000,NEG,draft,"drafted from row 1; shares library/weekends, asks about student hiring; unanswerable"
+CH_075,Is the computer lab open late during exam week?,campus_facilities,,,distractor_negative,,,0.400000,NEG,draft,"drafted from row 41; shares open-late, asks about computer lab; unanswerable"
+CH_078,Can I borrow a projector for my club event?,technical_issue,,,distractor_negative,,,0.285714,NEG,draft,"drafted from row 21; shares projector, asks about borrowing for club; unanswerable"
+CH_079,Is robotics offered as a minor?,student_life,,,distractor_negative,,,0.400000,NEG,draft,"drafted from row 34; shares robotics, asks if robotics is a minor; unanswerable"
+CH_080,Is MATH201 a prerequisite for statistics?,course_information,,,distractor_negative,,,0.400000,NEG,draft,"drafted from row 24; shares MATH201, asks if prerequisite for stats; unanswerable"
+CH_081,Are international students allowed to work off campus?,financial_aid,,,distractor_negative,,,0.500000,NEG,draft,"drafted from row 3; shares international students, asks about off-campus work; unanswerable"
+CH_082,Are there housing options for visiting faculty next semester?,housing,,,distractor_negative,,,0.444444,NEG,draft,"drafted from row 10; shares housing next semester, asks about visiting faculty; unanswerable"
+CH_083,Can I apply research methods credits toward my minor?,research_support,,,distractor_negative,,,0.500000,NEG,draft,"drafted from row 145; shares research/minor, asks about credit applicability; unanswerable"
+CH_084,Is stress testing covered in the engineering curriculum?,mental_health,,,distractor_negative,,,0.250000,NEG,draft,"drafted from row 23; shares stress, asks about engineering curriculum testing; unanswerable"
+CH_085,Where can I find crime statistics for a sociology paper?,safety,,,distractor_negative,,,0.285714,NEG,draft,"drafted from row 29; shares crime, asks about sociology paper statistics; unanswerable"
+CH_086,Where do I pick up my graduation gown?,administration,,,distractor_negative,,,0.333333,NEG,draft,"drafted from row 181; shares pick up, asks about graduation gown; unanswerable"
+CH_088,Is there a daycare management course on campus?,campus_facilities,,,distractor_negative,,,0.666667,NEG,draft,"drafted from row 36; shares daycare on campus, asks about management course; unanswerable"
+CH_089,Will a dropped class show up on my transcript?,financial_aid,,,distractor_negative,,,0.666667,NEG,draft,"drafted from row 33; shares dropped class, asks about transcript notation; unanswerable"
+CH_090,How do I report a bug infestation in my dorm room?,technical_issue,,,distractor_negative,,,0.444444,NEG,draft,"drafted from row 191; shares report bug, asks about dorm pest infestation; unanswerable"
