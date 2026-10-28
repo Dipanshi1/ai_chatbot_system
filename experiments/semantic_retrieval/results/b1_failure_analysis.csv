@@ -1,11 +1,11 @@
 challenge_id,query_text,category,slice,target_intent,acceptable_row_ids,rank1_row_id,rank1_score,outcome_class,failure_level,signatures,primary_tag,human_tag
-CH_002,How do I add a secondary specialization to my degree?,synonym_substitution,B1,academic_advising,22,8,0.4484739622657482,INTENT_ONLY,row_only,,UNASSIGNED,
+CH_002,How do I add a secondary specialization to my degree?,synonym_substitution,B1,academic_advising,22,8,0.4484739622657482,INTENT_ONLY,row_only,,UNASSIGNED,F2
 CH_009,Can I bring my guide dog to class?,synonym_substitution,B1,accessibility,194,73,0.44625815780084155,WRONG_INTENT,intent,,UNASSIGNED,
 CH_030,"Regarding credits earned at another institution, what is the procedure for getting them recognised?",syntactic_inversion,B1,academic_advising,103,25,0.48408575353339967,INTENT_ONLY,row_only,,UNASSIGNED,
 CH_031,"Could the grading of my exam be checked a second time, and if so, how?",syntactic_inversion,B1,academic_policies,17;188,20,0.5021148250496713,WRONG_INTENT,intent,,UNASSIGNED,
 CH_052,can i skip the prereq for a class??,slang_informal,B1,academic_advising,64,99,0.5387226507476354,WRONG_INTENT,intent,,UNASSIGNED,
 CH_055,need a tutor asap,slang_informal,B2,academic_support,162,98,0.5290161234613197,WRONG_INTENT,intent,,UNASSIGNED,
-CH_058,"lost my uni card, how do i get a new one",slang_informal,B1,administration,88,181,0.46711729529319435,INTENT_ONLY,row_only,,UNASSIGNED,
+CH_058,"lost my uni card, how do i get a new one",slang_informal,B1,administration,88,181,0.46711729529319435,INTENT_ONLY,row_only,,UNASSIGNED,F2
 CH_065,"missed the signup window for classes, am i screwed",slang_informal,B1,course_registration,47;99;108,2,0.5299487973256851,WRONG_INTENT,intent,,UNASSIGNED,
 CH_068,"need someone to talk to at 2am, is anyone there",slang_informal,B1,mental_health,61,41,0.3549482555317438,WRONG_INTENT,intent,,UNASSIGNED,
 CH_072,"kinda broke and cant afford groceries, any help?",slang_informal,B1,student_services,168,123,0.3485742767962243,INTENT_ONLY,row_only,F4,F4,
