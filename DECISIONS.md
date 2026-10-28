@@ -58,3 +58,36 @@ This document records architectural, documentation, and verification decisions e
   (`CLAUDE.md` §7). No ML behaviour, artifacts or dependencies changed.
 - **Tests**: new `tests/test_app_e2e.py` (Streamlit `AppTest`): startup, supported query, fallback,
   over-long input, example button + clear, and two leak-prevention tests (query and startup failures).
+
+---
+
+## B1 Phase 3 evaluation implemented without the authoritative specification (2026-10-29)
+- **Context**: the "Stage B1 Research & Technical Specification, Revision 2" document is not available
+  locally (targeted search found no copy). On user instruction, Phase 3 uses the repository as the source
+  of truth: `experiments/semantic_retrieval/config.py` (gates, statistics, resource limits, failure
+  thresholds), the freeze entry above (category names, statistics, gates), `lib/metrics.py` (metric
+  definitions) and the B1 README (passes, primary population and metric). Nothing below is claimed to
+  come from the missing document.
+- **Implementation decisions (not established elsewhere in the repo)**:
+  1. Outcome categories, assigned in order: *Regression* if the 95% CI upper bound of ΔAcceptableRecall@1
+     or ΔAcceptableMRR@10 is < 0, or ΔWrongIntent@1 (point estimate) > +5 pp; *Meaningful improvement* if
+     both point estimates meet T1/T2, both CI lower bounds are > 0, Wilcoxon p < 0.05 and the resource
+     gates hold (labelled "resource limit exceeded" / "resources not measured" otherwise); *Modest
+     improvement* if either CI lower bound is > 0; else *No meaningful difference / inconclusive*
+     (flagged underpowered when a point estimate meets its threshold).
+  2. Guardrails 1–2 (catastrophic regression; negative-probe score separation) are qualitative: the
+     script records evidence and marks both `pending_human_confirmation`; the category is provisional.
+  3. Wilcoxon runs on per-query AcceptableMRR@10 reciprocal ranks over P* in Pass 1; paired bootstrap is
+     computed for every population and slice (descriptive outside P*).
+  4. Resource gate uses the maximum incremental peak RSS over the 3 fresh-process probes; probes run
+     before the parent process loads the model (low-RAM safety).
+  5. Failures = Pass 1 semantic positives with INTENT_ONLY/WRONG_INTENT and negatives with WRONG_INTENT;
+     signatures use config thresholds; primary tag precedence F5 > F3 > F1 > F4; F2 is left for human tagging.
+- **Result (P*, n = 58, Pass 1)**: AcceptableRecall@1 0.276 → 0.828 (Δ +0.552, 95% CI +0.414…+0.690);
+  AcceptableMRR@10 0.341 → 0.891 (Δ +0.550, CI +0.434…+0.667); WrongIntent@1 0.483 → 0.103
+  (Δ −0.379); Wilcoxon p = 1.4e-8; p95 latency 16.5 ms; max incremental RSS 278.8 MB.
+  Provisional category: **Meaningful improvement**, pending the guardrail confirmations.
+- **Caveats recorded with the result**: Pass 3 (behind the Stage A classifier) WrongIntent@1 rises
+  0.362 → 0.655 because the semantic retriever never abstains (Stage A returns no candidate for 18/58);
+  negative-probe rank-1 scores (p50 0.56) barely separate from P* (p50 0.61); slices B3b/B4 are empty;
+  measured on WSL2 with 3.8 GB RAM visible and ~0.2 GB available at start.

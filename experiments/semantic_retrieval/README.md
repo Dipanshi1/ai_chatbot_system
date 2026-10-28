@@ -2,9 +2,9 @@
 
 **Status:** Phase 1 complete; benchmark human-reviewed (72/72 explicit decisions) and **frozen**
 (sha256 `b80b9b95d1f085a1f1537077f72ae485da2ab2cdb6d12cbdc92928f2b184bd6b`, recorded in `config.py` and
-`DECISIONS.md`). Phase 3 evaluation is **not implemented**: it is blocked until the authoritative
-Revision 2 specification is available in the repository.
-No retrieval evaluation has been run.
+`DECISIONS.md`). Phase 3 evaluation has been run. The authoritative Revision 2 document was not available,
+so Phase 3 follows the repository's recorded parameters; the rules it had to add are documented in
+`DECISIONS.md`.
 
 **Source of truth:** B1 Experimental Design Specification, **Revision 2 (final)**.
 This is an isolated experiment; Stage A (`src/`, `artifacts/`, `tests/`, `reports/`, `app.py`,
@@ -50,7 +50,8 @@ All pre-registered parameters live in [config.py](config.py).
 | `benchmark/challenge_set_v1.csv` | Frozen challenge benchmark (72 human-verified queries) |
 | `benchmark/challenge_set_v1_draft90.csv`, `human_review_decisions.json`, review/audit files | Audit evidence: original 90-row draft, recorded human decisions, review reports |
 | `scripts/01_build_index.py` | Builds `artifacts/kb_train_embeddings.npy` (git-ignored, regenerable) |
-| `scripts/02_run_eval.py`, `scripts/03_analyze_errors.py` | Phase 3 — not implemented (blocked on the authoritative specification) |
+| `scripts/02_run_eval.py`, `scripts/03_analyze_errors.py` | Phase 3 evaluation and failure-mode tagging (`results/`) |
+| `lib/evaluation.py` | Phase 3 logic: passes, population summaries, outcome category, failure tagging |
 | `tests/test_semantic_retriever.py` | B1 unit tests |
 | `results/` | Phase 3 outputs |
 
@@ -99,4 +100,29 @@ Stage A tests must keep passing in the Stage A environment:
 
 ## Findings
 
-None yet. No evaluation has been run; no B1 results exist.
+Measured on WSL2 (3.8 GB RAM visible, ~0.2 GB available at start), frozen benchmark `b80b9b95…`.
+
+**Primary — P\* (n = 58), Pass 1 global search over the 160 training rows:**
+
+| Metric | Stage A TF-IDF | B1 MiniLM | Δ (95% paired bootstrap CI) |
+|---|---|---|---|
+| AcceptableRecall@1 | 0.276 | 0.828 | +0.552 (+0.414 … +0.690) |
+| AcceptableMRR@10 | 0.341 | 0.891 | +0.550 (+0.434 … +0.667) |
+| WrongIntent@1 | 0.483 | 0.103 | −0.379 (−0.534 … −0.241) |
+
+Wilcoxon (supporting): p = 1.4e-8 (43 non-zero pairs). Resources: end-to-end p50 12.9 ms, p95 16.5 ms;
+max incremental peak RSS 278.8 MB; model load median 0.68 s. **Provisional outcome: Meaningful
+improvement** — the engineering gates hold; guardrails 1–2 still need human confirmation.
+
+Interpretation and limitations:
+- Gains are largest where lexical overlap is lowest (B1 slice: 0.056 → 0.750) and for synonym
+  substitutions (0.136 → 0.909); slang/informal improves least (0.333 → 0.667).
+- **Integration caveat:** behind the Stage A classifier (Pass 3), WrongIntent@1 rises 0.362 → 0.655,
+  because dense retrieval always returns a row while Stage A abstains (no candidate for 18/58). Using
+  B1 in the product would need a semantic similarity gate; none was calibrated here.
+- Negative probes: rank-1 semantic scores (p50 0.56) barely separate from P* (p50 0.61), so scores alone
+  cannot reject unanswerable queries; WrongIntent@1 on negatives 0.714 → 0.643 (CI includes 0).
+- Guardrail 1 evidence: one case (CH_055) where Stage A hit and B1 missed. Slices B3b/B4 are empty.
+- Failure analysis (Pass 1, B1): 19 failures — 9 negative-probe (F5), 1 low-similarity (F4),
+  9 UNASSIGNED awaiting human tagging. Index build 2.46 s exceeded its non-gating 1.5 s limit under
+  memory pressure. No alternative embedding model was run.
