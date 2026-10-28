@@ -216,3 +216,67 @@ def primary_failure_tag(signatures: Sequence[str]) -> str:
         if tag in signatures:
             return tag
     return "UNASSIGNED"
+
+
+# ---------------------------------------------------------------------------
+# Human-review preservation across reruns
+# ---------------------------------------------------------------------------
+GUARDRAIL_EVIDENCE = {1: "guardrail_1_cases_stage_a_hit_b1_miss", 2: "guardrail_2_rank1_score_distributions"}
+HUMAN_OUTCOME_KEYS = ("guardrails_human_review", "overall_acceptance", "overall_acceptance_reason",
+                      "reporting_decision", "provisional", "provisional_reason")
+PENDING = "pending_human_confirmation"
+
+
+def preserve_human_review(new: Dict, old: Optional[Dict]):
+    """
+    Carry human guardrail decisions from a previous result into a freshly computed one.
+
+    A guardrail's status/note is carried only if its evidence is unchanged; outcome-level human fields
+    only if both guardrails were carried and the computed category is unchanged. Anything not carried
+    is kept under `previous_human_review` (never silently dropped). Returns (new, messages).
+    """
+    msgs: List[str] = []
+    if not old:
+        return new, msgs
+    g_new, g_old = new["guardrails"], old.get("guardrails", {})
+    if g_old.get("previous_human_review"):  # history from earlier reruns is append-only, never dropped
+        g_new["previous_human_review"] = {k: list(v) for k, v in g_old["previous_human_review"].items()}
+    carried = []
+    for i, key in GUARDRAIL_EVIDENCE.items():
+        status = g_old.get(f"guardrail_{i}_status")
+        if not status or status == PENDING:
+            continue
+        prev = {k: g_old[k] for k in (f"guardrail_{i}_status", f"guardrail_{i}_human_note") if k in g_old}
+        if g_old.get(key) == g_new.get(key):
+            g_new.update(prev)
+            carried.append(i)
+        else:
+            g_new.setdefault("previous_human_review", {}).setdefault(f"guardrail_{i}", []).append(
+                dict(prev, reason="evidence changed on rerun; re-review required"))
+            msgs.append(f"guardrail {i}: evidence changed, previous human review kept under previous_human_review")
+    o_new = new["primary"]["outcome"]
+    o_old = old.get("primary", {}).get("outcome", {})
+    if o_old.get("previous_human_review"):
+        o_new["previous_human_review"] = list(o_old["previous_human_review"])
+    human = {k: o_old[k] for k in HUMAN_OUTCOME_KEYS if k in o_old}
+    has_decision = any(k in o_old for k in ("guardrails_human_review", "overall_acceptance"))
+    if has_decision:
+        if carried == [1, 2] and o_old.get("category") == o_new.get("category"):
+            o_new.update(human)
+        else:
+            o_new.setdefault("previous_human_review", []).append(
+                dict(human, category=o_old.get("category"),
+                     reason="guardrail evidence or category changed; re-review required"))
+            msgs.append("outcome: human acceptance decision not carried; kept under previous_human_review")
+    return new, msgs
+
+
+def merge_human_tags(new_rows: List[Dict], old_rows: Sequence[Dict]):
+    """Carry human_tag for failures whose rank-1 row is unchanged; return (rows, dropped human-tagged rows)."""
+    old = {r["challenge_id"]: r for r in old_rows if r.get("human_tag")}
+    for r in new_rows:
+        prev = old.get(r["challenge_id"])
+        if prev and str(prev.get("rank1_row_id")) == str(r.get("rank1_row_id")):
+            r["human_tag"] = prev["human_tag"]
+            del old[r["challenge_id"]]
+    return new_rows, list(old.values())
