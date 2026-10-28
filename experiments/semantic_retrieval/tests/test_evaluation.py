@@ -148,5 +148,114 @@ class TestScoreDistribution(unittest.TestCase):
         self.assertEqual(ev.score_distribution([])["n"], 0)
 
 
+def _result(cases, dist, category="Meaningful improvement"):
+    return {"guardrails": {"guardrail_1_cases_stage_a_hit_b1_miss": cases, "guardrail_1_status": "pending_human_confirmation",
+                           "guardrail_2_rank1_score_distributions": dist, "guardrail_2_status": "pending_human_confirmation"},
+            "primary": {"outcome": {"category": category, "provisional": True, "provisional_reason": "pending"}}}
+
+
+def _reviewed(cases, dist, category="Meaningful improvement"):
+    r = _result(cases, dist, category)
+    r["guardrails"].update({"guardrail_1_status": "violated", "guardrail_1_human_note": "n1",
+                            "guardrail_2_status": "violated", "guardrail_2_human_note": "n2"})
+    r["primary"]["outcome"].update({"provisional": False, "provisional_reason": "none", "overall_acceptance": "withheld",
+                                    "overall_acceptance_reason": "r", "guardrails_human_review": {"guardrail_1": "violated"}})
+    return r
+
+
+class TestHumanReviewPreservation(unittest.TestCase):
+    CASES, DIST = [{"challenge_id": "CH_055"}], {"b1:N": {"n": 14, "p95": 0.8}}
+
+    def test_review_survives_identical_rerun(self):
+        new, msgs = ev.preserve_human_review(_result(self.CASES, self.DIST), _reviewed(self.CASES, self.DIST))
+        self.assertEqual(new["guardrails"]["guardrail_1_status"], "violated")
+        self.assertEqual(new["guardrails"]["guardrail_2_human_note"], "n2")
+        o = new["primary"]["outcome"]
+        self.assertEqual((o["overall_acceptance"], o["provisional"]), ("withheld", False))
+        self.assertEqual(msgs, [])
+
+    def test_changed_evidence_resets_status_but_keeps_previous_review(self):
+        new, msgs = ev.preserve_human_review(_result([], self.DIST), _reviewed(self.CASES, self.DIST))
+        g = new["guardrails"]
+        self.assertEqual(g["guardrail_1_status"], "pending_human_confirmation")
+        self.assertEqual(g["previous_human_review"]["guardrail_1"][0]["guardrail_1_status"], "violated")
+        self.assertEqual(g["guardrail_2_status"], "violated")  # unchanged evidence still carried
+        o = new["primary"]["outcome"]
+        self.assertNotIn("overall_acceptance", o)
+        self.assertEqual(o["previous_human_review"][0]["overall_acceptance"], "withheld")
+        self.assertTrue(msgs)
+
+    def test_changed_category_does_not_carry_acceptance(self):
+        new, msgs = ev.preserve_human_review(_result(self.CASES, self.DIST, "Modest improvement"),
+                                             _reviewed(self.CASES, self.DIST))
+        self.assertNotIn("overall_acceptance", new["primary"]["outcome"])
+        self.assertEqual(new["primary"]["outcome"]["previous_human_review"][0]["category"], "Meaningful improvement")
+        self.assertTrue(msgs)
+
+    def test_history_survives_a_second_rerun(self):
+        first, _ = ev.preserve_human_review(_result([], self.DIST), _reviewed(self.CASES, self.DIST))
+        second, msgs = ev.preserve_human_review(_result([], self.DIST), first)
+        self.assertEqual(len(second["guardrails"]["previous_human_review"]["guardrail_1"]), 1)
+        self.assertEqual(second["primary"]["outcome"]["previous_human_review"][0]["overall_acceptance"], "withheld")
+
+    def test_no_previous_result(self):
+        new, msgs = ev.preserve_human_review(_result(self.CASES, self.DIST), None)
+        self.assertEqual(new["guardrails"]["guardrail_1_status"], "pending_human_confirmation")
+        self.assertEqual(msgs, [])
+
+
+class TestHumanTagPreservation(unittest.TestCase):
+    def test_tags_carried_when_failure_unchanged(self):
+        new = [{"challenge_id": "CH_002", "rank1_row_id": "8", "human_tag": ""},
+               {"challenge_id": "CH_009", "rank1_row_id": "73", "human_tag": ""}]
+        old = [{"challenge_id": "CH_002", "rank1_row_id": "8", "human_tag": "F2"},
+               {"challenge_id": "CH_009", "rank1_row_id": "73", "human_tag": ""}]
+        rows, dropped = ev.merge_human_tags(new, old)
+        self.assertEqual([r["human_tag"] for r in rows], ["F2", ""])
+        self.assertEqual(dropped, [])
+
+    def test_tag_reported_when_failure_disappears_or_changes(self):
+        new = [{"challenge_id": "CH_058", "rank1_row_id": "99", "human_tag": ""}]
+        old = [{"challenge_id": "CH_058", "rank1_row_id": "181", "human_tag": "F2"},
+               {"challenge_id": "CH_002", "rank1_row_id": "8", "human_tag": "F2"}]
+        rows, dropped = ev.merge_human_tags(new, old)
+        self.assertEqual(rows[0]["human_tag"], "")
+        self.assertEqual(sorted(d["challenge_id"] for d in dropped), ["CH_002", "CH_058"])
+
+
+class TestAnalyzeErrorsRefusesToDropTags(unittest.TestCase):
+    def test_default_aborts_without_overwriting(self):
+        import csv, importlib.util, tempfile
+        spec = importlib.util.spec_from_file_location("analyze", EXPERIMENT_DIR / "scripts" / "03_analyze_errors.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        saved = (config.COMPARISON_CSV_PATH, config.FAILURE_CSV_PATH, config.METRICS_JSON_PATH, sys.argv)
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            comp, fail = tmp / "comparison.csv", tmp / "failures.csv"
+            row = {k: "" for k in mod.FIELDS}
+            row.update({"challenge_id": "CH_X", "query_text": "alpha beta gamma", "rank1_row_id": "5",
+                        "rank1_score": "0.5", "outcome_class": "WRONG_INTENT", "retriever": mod.SemanticRetriever.name,
+                        "pass": ev.PRIMARY_PASS, "positive": "True"})
+            with open(comp, "w", newline="") as f:
+                w = csv.DictWriter(f, fieldnames=list(row)); w.writeheader(); w.writerow(row)
+            old = {k: "" for k in mod.FIELDS}
+            old.update({"challenge_id": "CH_Y", "rank1_row_id": "8", "human_tag": "F2"})
+            with open(fail, "w", newline="") as f:
+                w = csv.DictWriter(f, fieldnames=mod.FIELDS); w.writeheader(); w.writerow(old)
+            before = fail.read_bytes()
+            try:
+                config.COMPARISON_CSV_PATH, config.FAILURE_CSV_PATH = comp, fail
+                config.METRICS_JSON_PATH = tmp / "missing.json"
+                sys.argv = ["03_analyze_errors.py"]
+                self.assertEqual(mod.main(), 1)
+                self.assertEqual(fail.read_bytes(), before)  # CSV untouched
+                sys.argv = ["03_analyze_errors.py", "--allow-dropped-tags"]
+                self.assertEqual(mod.main(), 0)  # explicit override writes
+                self.assertNotIn("CH_Y", fail.read_text())
+            finally:
+                config.COMPARISON_CSV_PATH, config.FAILURE_CSV_PATH, config.METRICS_JSON_PATH, sys.argv = saved
+
+
 if __name__ == "__main__":
     unittest.main()
