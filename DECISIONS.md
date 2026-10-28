@@ -91,3 +91,30 @@ This document records architectural, documentation, and verification decisions e
   0.362 → 0.655 because the semantic retriever never abstains (Stage A returns no candidate for 18/58);
   negative-probe rank-1 scores (p50 0.56) barely separate from P* (p50 0.61); slices B3b/B4 are empty;
   measured on WSL2 with 3.8 GB RAM visible and ~0.2 GB available at start.
+
+---
+
+## B1 human review of guardrails and failure tags (2026-10-29)
+- **Guardrail 1 — violated** under the implemented operational definition (a positive query where Stage A
+  ranks an acceptable row first and B1 does not). One observed case: CH_055 ("need a tutor asap") — Stage A
+  ranks acceptable row 162 first; B1 ranks non-acceptable row 98 first (0.529) and 162 second (0.521). The
+  authoritative specification was unavailable and gave no severity threshold; this interpretation is not
+  claimed to come from it.
+- **Guardrail 2 — violated (qualitative)**: reliable score separation for unanswerable queries was not
+  demonstrated (B1 rank-1 p95 0.806 on negatives vs 0.796 on P*; medians 0.560 vs 0.613). No threshold
+  exists in the repository; "violated" is recorded because the status is binary.
+- **Human failure tags**: F2 for CH_002 (major vs minor) and CH_058 (first-time ID pickup vs replacement).
+  CH_009, CH_030, CH_031, CH_052, CH_055, CH_065 and CH_068 remain UNASSIGNED.
+- **Outcome category**: unchanged at the quantitative result ("Meaningful improvement" on the
+  pre-registered gates). The repository defines no rule for how guardrail violations change the category,
+  so the final category is left open for a user decision rather than assigned post hoc.
+- **Reporting decision (post-evaluation, project owner, 2026-10-29)**: the quantitative category
+  "Meaningful improvement" is kept as the benchmark result; **overall acceptance is withheld** because both
+  guardrails are marked violated under the current operational definitions. This is an explicit reporting
+  decision made after seeing the results, not a rule from the unavailable specification; the measured
+  retrieval improvement is not relabelled as a regression.
+- **Review preservation**: `02_run_eval.py` now carries human guardrail decisions forward only when their
+  evidence (and, for the acceptance decision, the computed category) is unchanged; otherwise it resets to
+  pending and keeps the old decision under `previous_human_review`. `03_analyze_errors.py` carries
+  `human_tag` values for unchanged failures and aborts rather than drop a tag (override:
+  `--allow-dropped-tags`).
