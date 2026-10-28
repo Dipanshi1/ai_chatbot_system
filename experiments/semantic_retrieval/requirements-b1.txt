@@ -1,0 +1,19 @@
+# B1 Semantic Retrieval Experiment — experiment-only dependencies.
+# Stage A requirements are included unchanged (pinned there); Stage A files stay frozen.
+# Install into experiments/semantic_retrieval/.venv-b1 (never into the Stage A .venv):
+#   python3 -m venv .venv-b1
+#   .venv-b1/bin/pip install -r requirements-b1.txt
+# torch is pinned to its +cpu build, which only exists on the PyTorch CPU index,
+# so no CUDA wheels can be selected.
+-r ../../requirements.txt
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+torch==2.14.1+cpu
+sentence-transformers==6.1.0
+transformers==5.18.0
+tokenizers==0.23.2
+huggingface_hub==1.33.0
+safetensors==0.8.0
+scipy==1.18.1
+psutil==7.2.2
+numpy==2.5.3
