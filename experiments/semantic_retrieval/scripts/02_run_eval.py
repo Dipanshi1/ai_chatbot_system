@@ -194,6 +194,11 @@ def main(argv=None) -> int:
             "population_counts": {k: summary[ev.PRIMARY_PASS][k]["n_queries"] for k in populations},
         },
     }
+    if config.METRICS_JSON_PATH.exists():
+        previous = json.loads(config.METRICS_JSON_PATH.read_text(encoding="utf-8"))
+        result, msgs = ev.preserve_human_review(result, previous)
+        for msg in msgs:
+            print(f"WARNING: {msg}")
     config.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     fields = [k for k in rows[0] if k != "_values"]
     with open(config.COMPARISON_CSV_PATH, "w", newline="", encoding="utf-8") as f:
