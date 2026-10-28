@@ -111,8 +111,11 @@ Measured on WSL2 (3.8 GB RAM visible, ~0.2 GB available at start), frozen benchm
 | WrongIntent@1 | 0.483 | 0.103 | −0.379 (−0.534 … −0.241) |
 
 Wilcoxon (supporting): p = 1.4e-8 (43 non-zero pairs). Resources: end-to-end p50 12.9 ms, p95 16.5 ms;
-max incremental peak RSS 278.8 MB; model load median 0.68 s. **Provisional outcome: Meaningful
-improvement** — the engineering gates hold; guardrails 1–2 still need human confirmation.
+max incremental peak RSS 278.8 MB; model load median 0.68 s. The quantitative engineering gates hold
+("Meaningful improvement" on those gates), but **human review recorded both guardrails as violated**. The
+quantitative result stands as the benchmark result, and **overall acceptance is withheld** because both
+guardrails are violated — an explicit post-evaluation reporting decision, not a rule from the missing
+specification (see `DECISIONS.md`).
 
 Interpretation and limitations:
 - Gains are largest where lexical overlap is lowest (B1 slice: 0.056 → 0.750) and for synonym
@@ -122,7 +125,10 @@ Interpretation and limitations:
   B1 in the product would need a semantic similarity gate; none was calibrated here.
 - Negative probes: rank-1 semantic scores (p50 0.56) barely separate from P* (p50 0.61), so scores alone
   cannot reject unanswerable queries; WrongIntent@1 on negatives 0.714 → 0.643 (CI includes 0).
-- Guardrail 1 evidence: one case (CH_055) where Stage A hit and B1 missed. Slices B3b/B4 are empty.
+- Guardrail 1 (violated, human review): one case, CH_055 — Stage A ranks acceptable row 162 first; B1 ranks
+  row 98 first and 162 second. No severity threshold was available. Guardrail 2 (violated, qualitative):
+  no reliable negative-probe score separation. Slices B3b/B4 are empty.
 - Failure analysis (Pass 1, B1): 19 failures — 9 negative-probe (F5), 1 low-similarity (F4),
-  9 UNASSIGNED awaiting human tagging. Index build 2.46 s exceeded its non-gating 1.5 s limit under
+  9 without an automatic signature; human review tagged CH_002 and CH_058 as F2 (entity collapse) and left
+  7 UNASSIGNED. Index build 2.46 s exceeded its non-gating 1.5 s limit under
   memory pressure. No alternative embedding model was run.
