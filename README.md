@@ -5,7 +5,7 @@ The **HCL Student Support Chatbot** is a reliable, reproducible, and safety-orie
 
 The project emphasizes transparency, statistical honesty, and defensive design: in university administration, providing an incorrect answer or hallucinated policy detail is far more harmful than courteously admitting uncertainty. When evidence is ambiguous or incomplete, the chatbot is architected to abstain or fall back gracefully rather than risk misinforming a student.
 
-> **Important Technical Note**: This system is **not** a Large Language Model (LLM) or generative conversational agent. It does not employ deep neural networks, generative AI, semantic vector databases, or Retrieval-Augmented Generation (RAG). It uses a deterministic TF-IDF representation paired with a Linear Support Vector Classifier (LinearSVC) and token-overlap retrieval over a curated institutional knowledge base.
+> **Important Technical Note**: This system is **not** a Large Language Model (LLM) or generative conversational agent. It does not employ deep neural networks, generative AI, semantic vector databases, or Retrieval-Augmented Generation (RAG). It uses a deterministic TF-IDF representation paired with a Linear Support Vector Classifier (LinearSVC) and token-overlap retrieval over a curated FAQ knowledge base.
 
 ---
 
@@ -14,10 +14,10 @@ The primary objective of this project is to provide a reproducible, verified, an
 
 Key design objectives include:
 1. **Accurate Routing**: Classifying student questions into one of 26 fine-grained administrative and academic intents.
-2. **Defensive Response Delivery**: Returning verified, pre-approved institutional answers only when evidence confirms a strong paraphrase match.
-3. **Graceful Degradation**: Directing students to the appropriate functional department when the general intent is clear but specific question details are missing.
-4. **Transparent Abstention**: Admitting uncertainty and directing students to human campus support when evidence is insufficient or queries are out of domain.
-5. **Full Reproducibility**: Guaranteeing identical execution and verification across fresh environments via pinned dependencies, cryptographic artifact manifests, and comprehensive unit test coverage.
+2. **Defensive Response Delivery**: Returning curated canned answers only when evidence confirms a strong paraphrase match.
+3. **Graceful Degradation**: Naming the likely support area when the general intent is clear but no reliable answer is available.
+4. **Transparent Abstention**: Admitting uncertainty and requesting clarification when evidence is insufficient or queries are out of domain.
+5. **Reproducibility**: Supporting repeatable verification via pinned dependencies, cryptographic artifact manifests, fixed seeds and automated tests.
 
 ---
 
@@ -49,13 +49,14 @@ The core layers operate as follows:
 - **`src.ml.retrieval`**: Restricts search to historical knowledge-base entries matching the predicted intent, ranking candidates by cosine similarity and computing Dice overlap on non-stopword content tokens.
 - **`src.ml.policy`**: The **sole decision-making authority** in the application. Inspects classifier margins, lexical coverage, and retrieval overlap to emit an immutable decision outcome.
 - **`src.ml.pipeline`**: Orchestrates evidence gathering, resolves system version signatures, and formats the user-facing response.
-- **`app.py`**: A thin Streamlit web interface that renders conversation history, outcome indicators, and technical diagnostics without duplicating any machine learning logic.
+- **`src.support`**: Student support layer around the pipeline (redaction, crisis triage, heuristic sentiment, tickets, feedback). It imports nothing from `src.ml`.
+- **`app.py`**: A Streamlit web interface that applies the support layer, then renders conversation history, outcome indicators, technical diagnostics and the staff portal, without duplicating any machine learning logic.
 
 ---
 
 ## Dataset
 
-The system is trained and evaluated on an institutional interaction dataset located at:
+The system is trained and evaluated on, and answers from, a single workbook located at:
 ```
 data/raw/AI-Powered Chatbot.xlsx
 ```
@@ -63,8 +64,54 @@ data/raw/AI-Powered Chatbot.xlsx
 ### Dataset Characteristics
 - **Total Records**: 200 interaction records.
 - **Intent Classes**: 26 distinct categories covering academic policies, advising, campus facilities, financial aid, IT support, administration, and student life.
-- **Class Distribution**: Severe class imbalance. Class support ranges from 24 examples for frequent categories (`campus_facilities`, `financial_aid`) down to **singleton classes** with only 1 example (`admissions`, `grades`, `academic_programs`, `study_abroad`, etc.).
-- **Response Knowledge**: Exactly 200 unique institutional bot responses. Each knowledge base answer corresponds to exactly one question context; no two entries share identical canned text.
+- **Class Distribution**: Severe class imbalance. Class support ranges from 23 examples (`campus_facilities`) and 20 (`student_services`) down to five **singleton classes** with only 1 example (`admissions`, `exam_schedule`, `grades`, `library`, `schedule`).
+- **Response Knowledge**: Exactly 200 unique canned responses. Each answer corresponds to exactly one question context; no two entries share identical text.
+
+---
+
+## Data Sources and Knowledge Base
+
+### Two Separate Datasets
+
+| | ML workbook | HCL-supplied dataset |
+| :--- | :--- | :--- |
+| **Location** | `data/raw/AI-Powered Chatbot.xlsx` (in this repository) | `dataset.csv` from the internship course LMS; not stored in this repository |
+| **Size** | 200 rows, 10 columns | 500 rows, 6 columns |
+| **Columns** | `Conversation ID`, `User ID`, `Timestamp`, `User Message`, `Intent`, `Intent Confidence`, `Topic`, `Sentiment Score`, `Sentiment Label`, `Bot Response` | `session_id`, `user_query_type`, `intent`, `confidence_score`, `escalated`, `user_rating` |
+| **Used by the chatbot?** | Yes: training, evaluation and runtime answers | No: nothing in the code loads it |
+
+The CSV's SHA-256 is `cbf1fbd353623819c462ad76e4277c264b7dcfe41af5dc91ecb44c4d743f7526`. A different, unrelated `dataset.csv` (retail inventory data) exists in the same course, so check the columns before using either file. The HCL dataset contains no message text, so it cannot train or evaluate the intent classifier or the sentiment heuristic. Only 3 of its 7 intent labels (`admissions`, `library`, `schedule`) exist among the workbook's 26 classes. All metrics in this document come from the 200-row workbook.
+
+### One Canonical Workbook, Two Roles
+
+`data/raw/AI-Powered Chatbot.xlsx` is the unified canonical source. No separate knowledge-base file exists.
+
+1. **Training source**: `load_dataset()` and `split_dataset()` read the workbook. Only `User Message` (features) and `Intent` (target) from the 160 training rows reach the model.
+2. **Runtime FAQ source**: `ResponseRetriever` reads the workbook directly and matches on `User Message`, returning the paired `Bot Response` text.
+
+`Bot Response` is never a model feature, so editing it cannot change the classifier.
+
+### Evaluation Knowledge Base vs Runtime Knowledge Base
+
+| | Rows | Built by | Used for |
+| :--- | :---: | :--- | :--- |
+| **Evaluation KB** | 160 (training split only) | `ResponseRetriever(df=train_df)` | All full-pipeline metrics below; leakage-free |
+| **Runtime FAQ KB** | **200 (whole workbook)** | `ResponseRetriever()` via `get_pipeline()` | Live answers in `app.py` and `src/chatbot.py` |
+
+The staff portal shows both record sets, labelled separately and defaulting to the 200-row runtime set. The running chatbot can therefore also return answers from the 40 held-out test rows. The full-pipeline metrics describe the leakage-free 160-row configuration, not the live 200-row index.
+
+### Canned-Response Remediation
+
+All 200 `Bot Response` entries were deliberately rewritten (recorded in `DECISIONS.md`, 2026-10-31). The original text ended with offers the single-turn system could not fulfil, such as "Would you like me to look that up?". Each response is now a self-contained answer, and responses state where the chatbot cannot access student records or act for a student.
+
+Compared with the committed baseline workbook:
+
+- `User Message`, `Intent`, `Topic` and every metadata field are identical; only `Bot Response` differs.
+- The 160 training-row identities are identical.
+- The vectorizer vocabulary and IDF values are identical, and classifier predictions and retrieval rankings are unchanged.
+- No retraining or artifact regeneration was performed: artifact hashes still match the manifest.
+
+Re-running the 200 workbook questions against both workbooks gave identical decisions, and the 40 evaluation queries gave identical outcomes, so the published metrics remain valid. The remediated wording has not been validated by university staff.
 
 ---
 
@@ -74,15 +121,15 @@ The machine learning workflow follows standard reproducible practices:
 1. **Schema Validation**: `load_dataset()` verifies that all required columns (`User Message`, `Intent`, `Bot Response`) exist with 0 null values.
 2. **Deterministic Partitioning**: `split_dataset()` performs an 80/20 train/test split (160 training rows, 40 test rows) using `random_state = 42`. Stratification is intentionally **not** applied because singleton classes cannot be partitioned into both train and test splits by `sklearn.model_selection.train_test_split`.
 3. **Text Preprocessing**: Both splits are cleaned element-wise using `clean_text()`. Punctuation, numbers, and stopwords are preserved to maintain natural query syntax.
-4. **Feature Extraction**: A `TfidfVectorizer` (unigrams and bigrams, default token pattern) is fitted strictly on the 160 training examples.
-5. **Model Training**: Linear classifiers are trained on the resulting sparse numerical feature matrix ($N=160, D=602$).
+4. **Feature Extraction**: A `TfidfVectorizer` (default settings: unigrams, default token pattern) is fitted strictly on the 160 training examples.
+5. **Model Training**: Linear classifiers are trained on the resulting sparse numerical feature matrix ($N=160, D=360$).
 6. **Honest Evaluation**: Models are benchmarked on the held-out test split ($N=40$) using Wilson score 95% confidence intervals, macro F1, and a majority baseline.
 
 ---
 
 ## Data Leakage Prevention
 
-To prevent artificial inflation of evaluation metrics, strict feature boundaries are enforced at the configuration level (`FORBIDDEN_FEATURE_COLUMNS` in `src.ml.config`):
+To prevent artificial inflation of evaluation metrics, training reads only `FEATURE_COLUMN` (`User Message`). `FORBIDDEN_FEATURE_COLUMNS` in `src.ml.config` documents the excluded columns:
 
 | Column Name | Role | Permitted as Feature? | Rationale / Leakage Risk |
 | :--- | :--- | :---: | :--- |
@@ -94,7 +141,7 @@ To prevent artificial inflation of evaluation metrics, strict feature boundaries
 | **`Sentiment Score` / `Label`** | Metadata | **NO** | Post-interaction annotation; irrelevant and uninformative for intent classification. |
 | **`User ID` / `Conversation ID` / `Timestamp`** | Metadata | **NO** | Session identifiers; causes classifiers to memorize user identity rather than language patterns. |
 
-Furthermore, during full-pipeline retrieval evaluation, the retrieval knowledge base is strictly restricted to the 160 training examples (`train_df`). The test split questions and responses are completely excluded from the retriever to avoid **retrieval leakage**.
+Furthermore, during full-pipeline retrieval evaluation (not at runtime; see [Evaluation Knowledge Base vs Runtime Knowledge Base](#evaluation-knowledge-base-vs-runtime-knowledge-base)), the retrieval knowledge base is strictly restricted to the 160 training examples (`train_df`). The test split questions and responses are completely excluded from the retriever to avoid **retrieval leakage**.
 
 ---
 
@@ -108,6 +155,8 @@ Three classical linear classifiers and a majority-class baseline were trained on
 | **Logistic Regression** | 0.425 (17/40) | [0.285, 0.578] | 0.237 | 0.146 | 0.374 | No |
 | **Multinomial Naive Bayes** | 0.375 (15/40) | [0.242, 0.530] | 0.120 | 0.074 | 0.287 | No |
 | **Majority Baseline** | 0.175 (7/40) | [0.087, 0.320] | 0.019 | 0.011 | 0.052 | No |
+
+*Macro F1 (Present Classes) averages over classes found in the test labels or predictions (18 for Linear SVM). Macro F1 (All 26 Classes) averages over every class with `zero_division=0`.*
 
 *Candidate models were evaluated using `sklearn` defaults with fixed `random_state=42`. No synthetic oversampling, class reweighting, or hyperparameter optimization was applied.*
 
@@ -155,29 +204,31 @@ The policy evaluates classifier margin, lexical in-vocabulary count, out-of-voca
 
 ```mermaid
 flowchart TD
-    Q[Student Query] --> P[Intent Classification]
-    P --> M{Margin >= 0.20?}
+    Q[Student Query] --> E{Empty after cleaning?}
+    E -- Yes --> A0[ABSTAINED: empty_input]
+    E -- No --> V{Any in-vocabulary content token?}
+    V -- No --> A1[ABSTAINED: no_lexical_evidence]
+    V -- Yes --> M{Margin >= 0.20?}
     M -- No --> A[ABSTAINED: low_margin]
-    M -- Yes --> L{Weak Lexical Evidence?}
-    L -- Yes --> A2[ABSTAINED: weak_lexical_evidence]
-    L -- No --> R[Retrieve KB Question within Intent]
-    R --> D{Cosine > 0 AND Dice >= 0.60?}
+    M -- Yes --> D{Cosine > 0, Dice >= 0.60 and a specific shared token?}
     D -- Yes --> ANS[ANSWERED: Knowledge Base Response]
-    D -- No --> FB[INTENT_FALLBACK: Safe Department Guidance]
+    D -- No --> L{Weak Lexical Evidence?}
+    L -- Yes --> A2[ABSTAINED: weak_lexical_evidence]
+    L -- No --> FB[INTENT_FALLBACK: no_reliable_match]
 ```
 
 1. **`ANSWERED`**:
-   - The classifier margin meets the threshold ($\ge 0.20$), lexical evidence is sufficient, and the query matches a knowledge-base question with high cosine similarity and content-token Dice overlap ($\ge 0.60$).
-   - *User Experience*: Returns the official canned response from the knowledge base.
+   - The classifier margin meets the threshold ($\ge 0.20$) and the query matches a knowledge-base question with positive cosine similarity, content-token Dice overlap ($\ge 0.60$) and at least one specific shared token.
+   - *User Experience*: Returns the canned response from the knowledge base.
    - *Example*: `"How can I connect to campus Wi-Fi?"` $\rightarrow$ `ANSWERED` (IT network instructions returned).
 2. **`INTENT_FALLBACK`**:
    - The classifier has identified a plausible intent with sufficient margin, but retrieval finds no exact or close paraphrase match in the knowledge base.
-   - *User Experience*: Returns structured departmental guidance without guessing specific facts:
+   - *User Experience*: Names the likely support area without guessing specific facts:
      *"I think this is about financial aid, but I don't have enough information to give a reliable answer to that specific question yet."*
    - *Example*: `"How do I apply for financial aid?"` $\rightarrow$ `INTENT_FALLBACK`.
 3. **`ABSTAINED`**:
    - The classifier margin is below threshold ($< 0.20$), lexical evidence is weak (e.g., out-of-vocabulary nonsense), or the input is empty.
-   - *User Experience*: Refuses to answer and politely requests clarification or directs the student to campus support:
+   - *User Experience*: Declines to answer and requests clarification:
      *"I'm not sure what you're asking about. Could you rephrase or add a little more detail?"*
    - *Example*: `"xyzabc something completely unrelated"` $\rightarrow$ `ABSTAINED`.
 
@@ -196,17 +247,21 @@ result = answer("How can I connect to campus Wi-Fi?")
 
 print("Outcome:  ", result.outcome.value)   # 'answered'
 print("Intent:   ", result.intent)          # 'technical_issue'
-print("Margin:   ", result.margin)          # 1.2584 (uncalibrated)
-print("Response: ", result.answer)          # 'Connect to Eduroam using your campus credentials...'
+print("Margin:   ", result.margin)          # 0.3216 (uncalibrated)
+print("Response: ", result.answer)          # "To connect to campus Wi-Fi, select the 'UniSecure' network..."
 ```
 
 ### Full-Pipeline Train-Only KB Evaluation
-When evaluated over the 40 test queries against a leakage-free train-only knowledge base ($N=160$):
+When evaluated over the 40 test queries against a leakage-free train-only knowledge base ($N=160$; this is not the 200-row runtime index):
 - **`ANSWERED` Rate**: 2.5% (1 query)
 - **`INTENT_FALLBACK` Rate**: 52.5% (21 queries)
 - **`ABSTAINED` Rate**: 45.0% (18 queries)
-- **Committed Intent Accuracy**: 72.7% (16/22 correct among answered/fallback queries)
-- **Wrong-Intent Answered**: **0 / 40 (0.0%)** (zero unsafe responses released)
+- **Committed Intent Accuracy**: 72.7% (16/22 correct among answered/fallback queries; 95% Wilson CI [0.518, 0.868])
+- **Wrong-Intent Answered**: **0 / 40 (0.0%)**
+
+Answer correctness itself is not measured; these figures describe safety gating.
+
+**Provenance**: these are the stored results in `reports/evaluation_summary.json` and `reports/pipeline_evaluation.csv`, generated on 2026-10-05 from the pre-remediation workbook. They record model `linsvc-a473f4580f16+tfidf-5f62a51adde8`, policy `phase4-v1` and KB `kb-df-db0915f97b6b`. Remediation changed answer text, not these outcome counts. The stored CSV keeps the old wording of its one returned answer. No equivalent evaluation exists for the 200-row runtime KB, because it contains the test questions.
 
 ---
 
@@ -226,8 +281,9 @@ When evaluated over the 40 test queries against a leakage-free train-only knowle
 │   └── manifest.json              # SHA-256 cryptographic integrity manifest
 │
 ├── data/
-│   └── raw/
-│       └── AI-Powered Chatbot.xlsx# Raw source dataset (200 rows, 26 intents)
+│   ├── raw/
+│   │   └── AI-Powered Chatbot.xlsx# Canonical workbook: training and runtime FAQ source (200 rows, 26 intents)
+│   └── runtime/                   # Local support database, created on first write (git-ignored)
 │
 ├── docs/                          # In-depth architectural & safety documentation
 │   ├── architecture.md            # System architecture, pipeline, and artifact flow
@@ -269,11 +325,14 @@ When evaluated over the 40 test queries against a leakage-free train-only knowle
 │   │   ├── retrieval.py           # Knowledge-base paraphrase retriever
 │   │   ├── schemas.py             # Strongly-typed immutable dataclasses
 │   │   └── training.py            # In-memory candidate model training
+│   ├── support/                   # Redaction, triage, sentiment, tickets, feedback, analytics, export
 │   └── ui/                        # Streamlit presentation helpers
 │       ├── __init__.py
 │       └── helpers.py             # UI validation, copy text, diagnostics
 │
-└── tests/                         # Unit, integration and Streamlit end-to-end tests (119 tests)
+└── tests/                         # Unit, integration and Streamlit end-to-end tests (266 tests)
+    ├── test_admin_analytics_and_export.py # Staff analytics and CSV export tests
+    ├── test_app_e2e.py            # Streamlit end-to-end tests
     ├── test_artifacts.py          # Manifest & hash verification tests
     ├── test_data.py               # Dataset loading & splitting tests
     ├── test_evaluation.py        # Metrics, Wilson CIs, & equivalence tests
@@ -281,8 +340,14 @@ When evaluated over the 40 test queries against a leakage-free train-only knowle
     ├── test_lexical.py            # Lexical tokenizer and OOV tests
     ├── test_pipeline.py           # Full pipeline orchestration tests
     ├── test_policy.py             # Safety gating & outcome decision tests
+    ├── test_redaction.py          # PII redaction tests
     ├── test_retrieval_kb.py       # Knowledge base retriever & Dice overlap tests
+    ├── test_sentiment.py          # Heuristic sentiment tests
+    ├── test_support_app_e2e.py    # Student and staff journey tests
+    ├── test_support_session.py    # Opt-out, escalation and admin sign-in tests
+    ├── test_support_store.py      # SQLite store and concurrency tests
     ├── test_training.py           # In-memory model training tests
+    ├── test_triage.py             # Crisis and request triage tests
     └── test_ui.py                 # UI input validation & diagnostics tests
 ```
 
@@ -349,7 +414,7 @@ python src/evaluate.py
 
 ## Running Tests
 
-Execute the complete automated test suite (119 tests, including Streamlit end-to-end tests):
+Execute the complete automated test suite (266 tests, including Streamlit end-to-end tests):
 ```bash
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
@@ -385,10 +450,28 @@ streamlit run app.py
 
 ### Features of the Web Interface:
 - **Clean Student UI**: Intuitive question-and-answer interface with conversation history.
-- **Safety Indicators**: Clearly signals whether an answer is an official canned match, general intent guidance, or an abstention.
+- **Safety Indicators**: Clearly signals whether an answer is a knowledge-base match, general intent guidance, or an abstention.
 - **Input Guardrails**: Rejects empty queries and limits input length to 500 characters.
 - **Diagnostics Panel**: An expandable drawer displaying uncalibrated decision margin, cosine similarity, content-token overlap, and model version.
 - **Independence Disclaimer**: Prominently notes that each user question is evaluated independently (no multi-turn state tracking).
+
+### Student Support Features (`src/support/`):
+- **PII Redaction**: Regex-based redaction runs before inference, display and storage. It does not detect free-text names, addresses or spelled-out details.
+- **Crisis Triage**: Phrase matching runs before ML processing, with separate self-harm and immediate-danger guidance. The guidance contains no phone numbers and states that the chat is not monitored. It is not exhaustive.
+- **Heuristic Sentiment**: A hand-written lexicon whose accuracy has not been measured. It never affects intent or answer selection; it is used only to decide whether to offer escalation.
+- **Escalation Tickets**: Requested manually, or offered when a negative message gets no reliable answer. Tickets need explicit consent and hold one redacted summary, with no contact details or transcripts.
+- **Session Opt-Out**: Deletes the session's stored rows and turns off feedback, for that browser session only.
+- **Optional Feedback**: A 1-5 star rating with an optional redacted comment.
+- **Staff Portal**: Password-protected ticket queue, analytics from stored tickets and feedback only, read-only viewer of the 200-row runtime FAQ records with the 160-row evaluation subset labelled separately, and sanitized CSV export. It uses one shared password, not per-user accounts or RBAC.
+
+Stored rows live in a local SQLite file (`data/runtime/support.sqlite3`, git-ignored) and expire after 30 days. `src/chatbot.py` does not use this layer.
+
+### Enabling the Staff Portal
+The portal stays closed until a password hash is configured. Generate one, then start the app with it in single quotes:
+```bash
+python -m src.support.admin_auth
+SUPPORT_ADMIN_PASSWORD_HASH='paste-the-hash-here' streamlit run app.py
+```
 
 ---
 
@@ -402,7 +485,9 @@ The project enforces reproducibility through multiple layers:
    - `artifacts/intent_model.pkl`: `a473f4580f168c0ef0c7ea0c4812c4b1ca94aebce9f107d25d442c5fb30fa211`
    - `artifacts/tfidf_vectorizer.pkl`: `5f62a51adde831fbc634872c95672fd403d50b9c715266376315731d4de250f7`
    - `artifacts/manifest.json`: `307d34fd6f41f414cfa38c12ea67057bfc91325a4920c5dada8b6d5e1e40fe91`
-4. **Automated Verification**: Running `from src.ml.artifacts import verify_artifacts; verify_artifacts()` programmatically validates all files against the manifest on application startup.
+4. **Automated Verification**: `verify_artifacts()` validates all files against the manifest. The Streamlit app runs it at startup; `src/chatbot.py` does not.
+5. **Prediction Equivalence**: The saved model predates the pinned `random_state=42`. A seeded refit matches it on 40/40 test predictions, so it is prediction-equivalent, not bit-reproducible.
+6. **Knowledge-Base Versioning**: Version labels hash the workbook, so remediation changed them. The runtime label is `kb-560c19da3266` and the train-only label is `kb-df-c85647c049e3`. Stored reports still show the pre-remediation `kb-df-db0915f97b6b`.
 
 ---
 
@@ -412,6 +497,7 @@ The project enforces reproducibility through multiple layers:
 - **Class Imbalance & Singletons**: Several intents possess only 1 or 2 examples, preventing stratified splitting and limiting minority-class generalization.
 - **Uncalibrated Confidence**: SVM decision margins are geometric distances, not calibrated probabilities.
 - **Static Knowledge Base**: Canned responses reflect a static snapshot of university policies and will become outdated if campus regulations change.
+- **Metrics vs Runtime Index**: Full-pipeline metrics use the 160-row evaluation KB, while the live chatbot searches all 200 rows.
 - **No Conversational Memory**: The system evaluates each query independently and cannot maintain context across multi-turn dialogues.
 - **Paraphrase Dependency**: Retrieval relies on lexical token overlap and cosine similarity; queries using novel vocabulary absent from the training set cannot be answered directly.
 
