@@ -29,5 +29,8 @@ artifacts/*
 !artifacts/tfidf_vectorizer.pkl
 !artifacts/manifest.json
 
+# Local support data (tickets and feedback)
+data/runtime/
+
 # Temporary files
 *.log
