@@ -7,7 +7,7 @@ This document details the training and evaluation framework for the University S
 ### Key Dataset Characteristics
 - **Total Dataset Size**: Exactly 200 interaction rows.
 - **Number of Intent Classes**: 26 distinct categories.
-- **Severe Class Imbalance**: Intent support ranges from 1 example (singleton classes such as `grades`, `housing`, `mental_health`, `schedule`, `study_abroad`) to 23 examples (`campus_facilities`).
+- **Severe Class Imbalance**: Intent support ranges from 1 example (singleton classes: `admissions`, `exam_schedule`, `grades`, `library`, `schedule`) to 23 examples (`campus_facilities`).
 - **Canonical Evaluation Split**: 80/20 train/test split (160 training rows, 40 testing rows) with `SPLIT_RANDOM_STATE = 42`.
 - **Stratification Rationale**: Stratified splitting is intentionally omitted because scikit-learn cannot stratify on classes with support < 2 (singletons), and force-stratifying would distort the distribution of small classes.
 
@@ -74,6 +74,8 @@ The canonical test split of 40 samples produces wide 95% Wilson confidence inter
 ### Why Full-KB Evaluation is Leaky
 If the retrieval knowledge base contains all 200 rows of the dataset, test queries can retrieve the exact question-response pair from the knowledge base, artificially inflating paraphrase match rates and masking retrieval limitations. Evaluating a pipeline against a knowledge base that contains held-out test data is severe data leakage.
 
+This describes evaluation only. The deployed chatbot intentionally searches all 200 rows, so these metrics apply to the 160-row evaluation knowledge base, not the live index.
+
 ### Train-Only Knowledge Base Protocol
 To evaluate the end-to-end chatbot pipeline honestly:
 1. The retrieval index is constructed exclusively from the **160 training rows** (`ResponseRetriever(df=train_df)`).
@@ -97,6 +99,9 @@ To evaluate the end-to-end chatbot pipeline honestly:
 - **Committed Intent Accuracy**: **16 / 22 (72.7%)** with 95% Wilson CI [0.518, 0.868].
 - **Predicted Intent Accuracy**: **20 / 40 (50.0%)** with 95% Wilson CI [0.352, 0.648].
 - **Held-Out Response Returned**: **0** (No test sample ever retrieved its own held-out answer).
+
+### Provenance
+These stored results were generated on 2026-10-05 from the pre-remediation workbook (KB label `kb-df-db0915f97b6b`). The later `Bot Response` remediation changed answer text and KB labels, not outcome counts; the current train-only label is `kb-df-c85647c049e3`.
 
 ---
 
