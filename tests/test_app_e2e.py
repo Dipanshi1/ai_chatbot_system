@@ -78,7 +78,8 @@ class TestAppEndToEnd(unittest.TestCase):
         self.assertEqual(len(at.chat_message), 3)  # greeting, user, assistant
         text = _rendered_text(at)
         self.assertIn("Disbursement", text)
-        self.assertIn("Verified Knowledge Base Answer", text)
+        self.assertIn("Direct Knowledge Base Match", text)
+        self.assertNotIn("Verified", text)
 
     def test_unsupported_query_follows_fallback_or_abstention(self):
         at = self.run_app()
@@ -87,6 +88,32 @@ class TestAppEndToEnd(unittest.TestCase):
         text = _rendered_text(at)
         self.assertIn("not sure", text.lower())
         self.assertIn("Clarification Requested", text)
+
+    def test_standalone_conversational_follow_ups_abstain(self):
+        """Conversational follow-ups (e.g. 'yes', 'okay', 'when?') abstain without memory."""
+        for msg in ["yes", "okay", "when?"]:
+            with self.subTest(msg=msg):
+                at = self.run_app()
+                at.chat_input[0].set_value(msg).run()
+                self.assertEqual(len(at.exception), 0)
+                self.assertEqual(len(at.chat_message), 3)  # greeting, user, assistant
+                text = _rendered_text(at)
+                self.assertIn("not sure", text.lower())
+                self.assertIn("Clarification Requested", text)
+
+    def test_multiturn_conversational_follow_up_sequence(self):
+        """User asks query, then sends 'yes'; assistant abstains cleanly without claiming memory."""
+        at = self.run_app()
+        at.chat_input[0].set_value("When will my financial aid be disbursed?").run()
+        self.assertEqual(len(at.exception), 0)
+        self.assertEqual(len(at.chat_message), 3)
+        self.assertIn("Disbursement", _rendered_text(at))
+
+        at.chat_input[0].set_value("yes").run()
+        self.assertEqual(len(at.exception), 0)
+        self.assertEqual(len(at.chat_message), 5)
+        latest_text = at.chat_message[-1].markdown[0].value
+        self.assertIn("not sure", latest_text.lower())
 
     def test_overlong_input_is_rejected_without_calling_pipeline(self):
         at = self.run_app()
@@ -103,6 +130,16 @@ class TestAppEndToEnd(unittest.TestCase):
         clear = next(b for b in at.button if "Clear" in b.label)
         clear.click().run()
         self.assertEqual(len(at.chat_message), 1)
+
+    def test_welcome_suggestion_tile_interaction(self):
+        at = self.run_app()
+        tiles = [b for b in at.button if b.key and b.key.startswith("tile_")]
+        self.assertGreaterEqual(len(tiles), 4)
+        tiles[0].click().run()
+        self.assertEqual(len(at.exception), 0)
+        self.assertEqual(len(at.chat_message), 3)
+        tiles_active = [b for b in at.button if b.key and b.key.startswith("tile_")]
+        self.assertEqual(len(tiles_active), 0)
 
     def test_pipeline_failure_does_not_leak_internal_details(self):
         at = AppTest.from_function(_query_error_script, args=(str(BASE_DIR), SECRET), default_timeout=60).run()
