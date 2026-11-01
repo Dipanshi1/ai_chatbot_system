@@ -41,6 +41,9 @@ REGRESSION_CASES = [
     ("when will my financial aid be disbursed?", Outcome.ANSWERED, None, "financial_aid"),
     ("how do i connect to campus wi-fi?", Outcome.ANSWERED, None, "technical_issue"),
     ("i forgot my portal password", Outcome.ANSWERED, None, "technical_issue"),
+    ("yes", Outcome.ABSTAINED, AbstainReason.NO_LEXICAL_EVIDENCE, None),
+    ("okay", Outcome.ABSTAINED, AbstainReason.NO_LEXICAL_EVIDENCE, None),
+    ("when?", Outcome.ABSTAINED, AbstainReason.NO_LEXICAL_EVIDENCE, None),
 ]
 
 ALL_QUERIES = [q for q, *_ in REGRESSION_CASES] + [
@@ -90,6 +93,17 @@ class TestRegressionOutcomes(unittest.TestCase):
         self.assertIsNone(r.predicted_intent)
         self.assertIsNone(r.lexical)
         self.assertEqual(r.top_predictions, ())
+
+    def test_standalone_conversational_follow_ups_abstain(self):
+        """Standalone conversational messages (e.g. 'yes', 'okay', 'when?') abstain with no memory."""
+        for msg in ["yes", "okay", "when?"]:
+            with self.subTest(query=msg):
+                r = answer(msg)
+                self.assertEqual(r.outcome, Outcome.ABSTAINED)
+                self.assertEqual(r.abstain_reason, AbstainReason.NO_LEXICAL_EVIDENCE)
+                self.assertIsNone(r.intent)
+                self.assertEqual(r.answer_source, "clarification")
+                self.assertIn("not sure what you're asking about", r.answer.lower())
 
 
 class TestRetrievalEvidence(unittest.TestCase):
