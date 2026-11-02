@@ -14,8 +14,9 @@ Stable engineering contract. Explicit user instructions override it (§8). Appro
   holds its pre-registered parameters and the B1 README summarises it; neither replaces it. When a task
   depends on spec wording not captured in `config.py`, ask the user for the document — never reconstruct it.
 - **Decisions:** `DECISIONS.md` (append-only record of approved decisions).
-- **Current B1 state (user-maintained):** Phase 1 complete; benchmark awaiting human label review, then
-  freeze. Phase 3 not started.
+- **Current B1 state (user-maintained):** Phase 1 complete; benchmark human-reviewed (72/72) and frozen
+  (sha256 `b80b9b95…`). Phase 3 evaluation complete: quantitative category "Meaningful improvement", overall
+  acceptance withheld because guardrails 1 and 2 are marked violated (`DECISIONS.md`). B1 is not deployed.
 
 ## 2. Commands (repo root; do not invent others)
 `<pattern>` is a placeholder: replace it with a test name, class or substring before running
