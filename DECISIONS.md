@@ -118,3 +118,130 @@ This document records architectural, documentation, and verification decisions e
   pending and keeps the old decision under `previous_human_review`. `03_analyze_errors.py` carries
   `human_tag` values for unchanged failures and aborts rather than drop a tag (override:
   `--allow-dropped-tags`).
+
+---
+
+## HCL support features: Stage A freeze exception (2026-10-30)
+- **Authorization**: RECORDED (the project owner explicitly authorized additive changes for the HCL submission under the `CLAUDE.md` §3 freeze exception, limited to new `src/support/` modules, `app.py`, `src/ui/helpers.py`, `tests/`, `.gitignore` and this file).
+- **Remains frozen**: `src/ml/`, serialized artifacts and `artifacts/manifest.json`, raw training data, B1
+  benchmark files and research results, and the empty `b1_candidate_benchmark_audit.md`. No new dependencies,
+  paid services or external APIs. Nothing is staged, committed or pushed under this exception.
+- **Features**: PII redaction before inference, display and persistence; crisis triage before ML processing,
+  with distinct self-harm and immediate-danger guidance and no invented contact numbers; heuristic sentiment
+  that cannot affect intent or answer selection; session opt-out; consent-based redacted escalation tickets
+  with manual requests and automatic offers on negative sentiment plus abstention; optional feedback; an
+  administrator-visible ticket queue.
+- **Data rules**: no contact details and no chat transcripts are stored. Stored rows expire after a fixed
+  retention period. Stored or logged support data is never used for training or tuning.
+- **Recorded behaviour change**: redacting before `pipeline.answer()` changes the pipeline's input, and so
+  possibly its outcome, for messages containing PII. Policy gates and thresholds are unchanged.
+
+---
+
+## HCL support features: Admin Analytics and Data Export (2026-10-31)
+- **Authorization**: user-instructed additive administrator features (Admin Analytics dashboard, read-only Knowledge Base viewer, and sanitized CSV data export). Status: IMPLEMENTED.
+- **Strict freeze preserved**: `src/ml/`, artifacts, manifests, benchmarks, raw Excel dataset, and
+  previously verified support ticket lifecycle behaviour remain strictly untouched.
+- **Admin Analytics architecture**:
+  - Telemetry is derived strictly from actual rows in the SQLite support store (`tickets` and `feedback`).
+  - No synthetic/mock records or invented statistics are displayed.
+  - The application explicitly disclaims total chat volume or unconsented student telemetry: unescalated
+    interactions are processed ephemerally in memory and never logged.
+  - Insufficient data states are cleanly indicated when tables have 0 rows or missing sentiments.
+- **Knowledge Base viewer architecture**:
+  - Exposes the approved 160-record knowledge base (`split_dataset(load_dataset())[0]`) in a read-only viewer.
+  - Features real-time substring search with punctuation/hyphen normalization (e.g. "wifi" matches "Wi-Fi").
+  - Strictly read-only; no modification of canonical data or artifacts.
+- **Admin authentication architecture**:
+  - Single shared administrator credential using salted `hashlib.scrypt` (`n=16384`, `r=8`, `p=1`, `dklen=32`), not PBKDF2.
+  - Constant-time verification via `hmac.compare_digest` with fail-closed behavior when unset.
+  - Session-level lockout after 3 failed attempts; gate controls access to ticket queue, analytics, and data export.
+- **Data Export security safeguards**:
+  - Enforces application-level authentication via `require_admin_auth()` (backed by `hashlib.scrypt` verification) prior to data generation.
+  - Excludes opted-out sessions (`exclude_session_ids`).
+  - Redacts PII in summaries and comments using `redact()`.
+  - Neutralizes spreadsheet formula injection (CWE-1236) by prefixing `=`, `+`, `-`, `@`, `\t`, `\r` with `'`.
+  - Omits internal primary keys, session IDs, passwords, hashes, and student contact details.
+  - Outputs strictly UTF-8 encoded CSV.
+
+---
+
+## Single-Turn Conversational Follow-Up and Knowledge Base Remediation (2026-10-31)
+- **Authorization**: user-instructed remediation of misleading conversational follow-up behaviour in single-turn mode. Status: IMPLEMENTED.
+- **Context & Issue**: The chatbot operates strictly in single-turn mode without conversational memory. Knowledge base canned answers previously ended with unfulfillable follow-up invitations (e.g., "I can check that for you.", "Would you like me to look that up?", "Tell me your major"), prompting user follow-ups like "yes" or "when?" which resulted in confusing clarification abstentions.
+- **Strict freeze preserved**:
+  - `src/ml/` and all serialized model artifacts (`artifacts/intent_model.pkl`, `artifacts/tfidf_vectorizer.pkl`, `artifacts/manifest.json`) remain strictly untouched.
+  - Single-turn ML architecture, TF-IDF vectorization, LinearSVC classification, lexical overlap retrieval, and deterministic policy thresholds are preserved without modification.
+- **Knowledge base remediation (`data/raw/AI-Powered Chatbot.xlsx`)**:
+  - All 200 responses inspected and updated to replace unsupported personalized offers with complete, self-contained answers.
+  - Misleading follow-up questions and multi-turn invitations removed.
+  - Clear distinction between general university information and individual student-record information established (e.g., explicitly noting that the chatbot cannot access individual student records or take actions on behalf of students).
+  - No financial records, student details, dates, or institutional contacts invented.
+  - All 200 responses maintain pairwise uniqueness to satisfy leakage isolation assertions between train and test splits.
+- **Regression testing**:
+  - Added regression test cases and assertions in `tests/test_pipeline.py` and `tests/test_app_e2e.py` verifying that standalone conversational messages ("yes", "okay", "when?") abstain cleanly (`NO_LEXICAL_EVIDENCE`) in single-turn mode without claiming conversational memory.
+  - Added test in `tests/test_ui.py` confirming the user-facing disclaimer explicitly disclaims conversational memory.
+
+---
+
+## Admin Portal Refinement: Knowledge Base Safe Text Wrapping and Analytics Charts (2026-10-31)
+- **Authorization**: user-instructed refinement of the Admin Portal: safe text wrapping for long FAQ answers in the Knowledge Base Viewer, and real ticket-status and daily-trend charts in the Analytics Dashboard. Status: IMPLEMENTED.
+- **Strict freeze preserved**:
+  - `src/ml/`, artifacts, manifests, benchmark files, datasets (`data/raw/`), and ticket lifecycle/privacy policies remain strictly untouched.
+  - No synthetic data is fabricated; honest empty states (`st.info`) are preserved when data is 0 or absent.
+  - Zero claims of full chatbot query volume analytics: captions clarify that telemetry is exclusively derived from stored tickets/feedback in the 30-day SQLite store, while unescalated interactions are ephemeral and unlogged.
+- **Knowledge Base Viewer enhancements**:
+  - Replaced canvas-based `st.dataframe` with an accessible, semantic HTML table wrapped inside `.kb-viewer-container` and `.kb-viewer-table`.
+  - Content cells enforce safe text wrapping (`white-space: normal !important`, `word-break: break-word !important`, `overflow-wrap: break-word !important`, `line-height: 1.5`), ensuring long FAQ answers are fully readable across multiple lines without truncating ellipses.
+  - Table container enforces a max-height (560px) and contained horizontal/vertical scroll (`overflow-x: auto`, `overflow-y: auto`, `min-width: 720px`, sticky header), preventing page blowout on smaller viewports.
+  - All text content rendered is safely HTML-escaped with `html.escape()` to prevent XSS.
+  - Real-time search query filtering and intent selectbox filtering are fully preserved.
+- **Analytics Dashboard enhancements**:
+  - Added real ticket-status bar chart (`st.bar_chart(status_df, x="Status", y="Tickets", color="#2563eb")`) rendered when total tickets > 0.
+  - Added daily ticket creation trend bar chart (`st.bar_chart(trend_df, x="Date", y="Tickets Created", color="#0284c7")`) rendered when creation trends are non-empty.
+  - When tickets or trends are empty/zero, honest empty state alerts are displayed (`st.info`) rather than empty or fabricated charts.
+
+---
+
+## Critical UX and FAQ Coverage Audit: Sample Prompts Remediation (2026-11-01)
+- **Authorization**: user-instructed audit and remediation of responses to suggested sample questions ("How do I apply for financial aid?", "When is course registration?", "Where can I find student services?"). Status: IMPLEMENTED.
+- **Audit Findings**:
+  - `"How do I apply for financial aid?"`: Intent `financial_aid` correctly predicted with high margin (1.2630), but no general application FAQ exists in the workbook. Nearest neighbor was Row 198 (*"how to request a meeting with financial aid?"*) with Dice 0.5714 < 0.60, correctly triggering safety gate `NO_RELIABLE_MATCH` (`INTENT_FALLBACK`).
+  - `"When is course registration?"`: Intent `course_registration` correctly predicted (margin 0.4316), but no calendar start-date FAQ exists. Nearest candidate was Row 47 (*"is late registration allowed?"*) with Dice 0.4000 < 0.60, correctly triggering safety gate `NO_RELIABLE_MATCH` (`INTENT_FALLBACK`).
+  - `"Where can I find student services?"`: Broad, generic phrasing caused low classifier margin (0.0886 < 0.20), correctly triggering safety abstention `LOW_MARGIN` (`ABSTAINED`).
+  - `"When is the library open on weekends?"`: Exact match to Row 1 (`campus_facilities`), returning direct FAQ answer (`ANSWERED`).
+- **Remediation**:
+  - Replaced unsupported sample prompts in `src/ui/helpers.py` with validated questions from the existing 200-row workbook that reliably achieve `Outcome.ANSWERED` with high margin and Dice >= 0.85:
+    1. `"How do I add a course to my schedule?"` (Course Registration, Row 0)
+    2. `"When will my financial aid be disbursed?"` (Financial Aid, Row 65)
+    3. `"When is the library open on weekends?"` (Campus Facilities / Library, Row 1)
+    4. `"Who do I contact about accessibility services?"` (Student Services, Row 13)
+  - Synchronized `EXAMPLE_QUESTIONS` (sidebar) and `SUGGESTED_TILES` (welcome stage) to ensure 100% of suggested prompts yield verified direct answers.
+  - Preserved all safety thresholds (`MARGIN_THRESHOLD = 0.20`, `PARAPHRASE_MIN_DICE = 0.60`), abstention policies, and canonical model artifacts without modification.
+- **Regression Testing**: Added `test_displayed_sample_prompts_return_direct_faq_answers` and `test_unsupported_sample_prompts_safety_abstention_audit` in `tests/test_ui.py`.
+
+---
+
+## Documentation alignment after workbook remediation (2026-10-31)
+- **Authorization**: RECORDED (the project owner explicitly requested updates to the README and architecture documentation; `docs/model_card.md` received factual corrections for the same figures. No code, artifact, workbook, benchmark or result file changed).
+- **Knowledge-base wording**: documents describe the workbook as the unified canonical source for training and runtime FAQ answers. No separate knowledge-base file exists.
+- **Runtime row count**: the audit input stated a 160-row runtime knowledge base. Verified code and a live load show `get_pipeline()` indexes all 200 rows; 160 rows apply to evaluation and the admin viewer. Documents record the verified behaviour. Whether runtime should be restricted to 160 rows is an open owner decision.
+- **Corrected pre-existing errors**: vocabulary size (360 unigram features, not 602 with bigrams), class counts and singleton list, policy gate order, and the Wi-Fi example output.
+- **Metrics**: unchanged. `evaluate.py` was not re-run, so stored reports keep `kb-df-db0915f97b6b`; the current train-only label is `kb-df-c85647c049e3`.
+
+---
+
+## Runtime FAQ terminology and evaluation reconciliation (2026-10-31)
+- **Authorization**: RECORDED (the project owner directed runtime FAQ terminology and evaluation reconciliation; `src/ml/`, artifacts, reports, B1 files and the workbook were not modified).
+- **Knowledge-base scope**: the 200-row runtime FAQ knowledge base and the 160-row evaluation subset are both preserved. The staff viewer shows the 200 runtime records by default and labels the evaluation subset separately. The sidebar row count now reads the live retriever.
+- **Terminology**: "Approved Knowledge Base" became "Runtime FAQ Knowledge Base" and "Verified Knowledge Base Answer" became "Direct Knowledge Base Match". No wording implies external university approval.
+- **Authoritative outcome counts**: 1 answered, 21 fallback, 18 abstained of 40, from the stored reports (model `linsvc-a473f4580f16+tfidf-5f62a51adde8`, policy `phase4-v1`, KB `kb-df-db0915f97b6b`, train-only 160 rows). A reported 20/14/6 split appears nowhere in the repository or its history and is impossible under this model and policy: 16 queries abstain before retrieval whatever the knowledge base. No evaluation was re-run.
+
+---
+
+## Final documentation consistency review (2026-10-31)
+- **Authorization**: RECORDED (the project owner requested this documentation consistency review, including removal of machine-specific links and alignment of B1 status in `CLAUDE.md`. No code, artifact, report, benchmark, notebook or raw data file changed).
+- **Final values**: runtime FAQ knowledge base 200 rows; evaluation knowledge base 160 rows; pipeline outcomes 1 answered, 21 fallback, 18 abstained of 40; LinearSVC accuracy 20/40; macro F1 0.334 (present classes).
+- **HCL CSV identity**: `dataset.csv`, 500 rows, 6 columns, sha256 `cbf1fbd353623819c462ad76e4277c264b7dcfe41af5dc91ecb44c4d743f7526`. Windows download metadata records `university-lms.career-shaper.com`, course 14873. "HCL-supplied" is the project owner's description; nothing in the file states its publisher.
+- **Superseded wording**: the 2026-10-31 viewer entry above says "approved 160-record knowledge base". The later terminology entry replaces it; earlier text stays unchanged because this file is append-only.
+- **Notebook**: left unedited. Some prose cells contradict its stored outputs. Correcting them properly needs a deliberate re-execution, which is an open owner decision.
