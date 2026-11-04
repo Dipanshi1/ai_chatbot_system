@@ -1,7 +1,7 @@
-# HCL Student Support Chatbot
+# University Student Support Chatbot
 
 ## Overview
-The **HCL Student Support Chatbot** is a reliable, reproducible, and safety-oriented automated assistant designed to answer student support inquiries. Built on classical machine learning principles, the system pairs supervised multi-class intent classification with curated knowledge-base retrieval and a defensive three-tier safety gating policy.
+The **University Student Support Chatbot** is a reliable, reproducible, and safety-oriented automated assistant designed to answer student support inquiries. Built on classical machine learning principles, the system pairs supervised multi-class intent classification with curated knowledge-base retrieval and a defensive three-tier safety gating policy.
 
 The project emphasizes transparency, statistical honesty, and defensive design: in university administration, providing an incorrect answer or hallucinated policy detail is far more harmful than courteously admitting uncertainty. When evidence is ambiguous or incomplete, the chatbot is architected to abstain or fall back gracefully rather than risk misinforming a student.
 
